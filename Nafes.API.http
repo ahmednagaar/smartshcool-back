@@ -1,0 +1,6 @@
+@Nafes.API_HostAddress = http://localhost:5091
+
+GET {{Nafes.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
