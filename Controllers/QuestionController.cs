@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nafes.API.Data;
 using Nafes.API.DTOs.Question;
-using Nafes.API.DTOs.Question;
 using Nafes.API.DTOs.Shared;
 using Nafes.API.Modules;
 using System.Text.Json;
