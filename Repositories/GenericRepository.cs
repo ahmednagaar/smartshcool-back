@@ -68,6 +68,18 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseModel
         return (items, totalCount);
     }
 
+    public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
+    {
+        IQueryable<T> query = _dbSet.Where(e => !e.IsDeleted);
+        
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+        
+        return await query.CountAsync();
+    }
+
     public async Task AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);
@@ -85,5 +97,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseModel
         entity.IsDeleted = true;
         entity.DeletedAt = DateTime.UtcNow;
         _dbSet.Update(entity);
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 }

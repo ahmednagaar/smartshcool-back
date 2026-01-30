@@ -313,7 +313,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("analytics/difficult-questions")]
-    public async Task<IActionResult> GetDifficultQuestions([FromQuery] int grade, [FromQuery] int subject, [FromQuery] int limit = 5)
+    public IActionResult GetDifficultQuestions([FromQuery] int grade, [FromQuery] int subject, [FromQuery] int limit = 5)
     {
         // TODO: Implement proper question-level analytics. Current TestResult model is per-game, not per-question.
         // Returning empty list to unblock build.

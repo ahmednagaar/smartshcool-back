@@ -1,11 +1,8 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Nafes.API.Data;
 using Nafes.API.DTOs.Question;
 using Nafes.API.DTOs.Shared;
-using Nafes.API.Modules;
-using System.Text.Json;
+using Nafes.API.Services;
 
 namespace Nafes.API.Controllers;
 
@@ -13,17 +10,17 @@ namespace Nafes.API.Controllers;
 [Route("api/[controller]")]
 public class QuestionController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IQuestionService _questionService;
+    private readonly ILogger<QuestionController> _logger;
 
-    public QuestionController(IUnitOfWork unitOfWork, IMapper mapper)
+    public QuestionController(IQuestionService questionService, ILogger<QuestionController> logger)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _questionService = questionService;
+        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<QuestionGetDto>>> GetAll(
+    public async Task<ActionResult<PaginatedResponse<QuestionGetDto>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         [FromQuery] int? grade = null,
@@ -32,168 +29,123 @@ public class QuestionController : ControllerBase
         [FromQuery] int? difficulty = null,
         [FromQuery] string? search = null)
     {
-        // Create search DTO from query params
-        var searchDto = new QuestionSearchRequestDto
+        var request = new QuestionSearchRequestDto
         {
             Page = page,
-            PageSize = Math.Min(pageSize, 100), // Max 100 per page
-            Grade = grade.HasValue ? (GradeLevel)grade.Value : null,
-            Subject = subject.HasValue ? (SubjectType)subject.Value : null,
-            Type = type.HasValue ? (QuestionType)type.Value : null,
-            Difficulty = difficulty.HasValue ? (DifficultyLevel)difficulty.Value : null,
+            PageSize = pageSize,
+            Grade = grade.HasValue ? (Modules.GradeLevel)grade.Value : null,
+            Subject = subject.HasValue ? (Modules.SubjectType)subject.Value : null,
+            Type = type.HasValue ? (Modules.QuestionType)type.Value : null,
+            Difficulty = difficulty.HasValue ? (Modules.DifficultyLevel)difficulty.Value : null,
             SearchTerm = search
         };
 
-        var (items, totalCount) = await _unitOfWork.Questions.SearchAsync(searchDto);
-        var questionDtos = _mapper.Map<IEnumerable<QuestionGetDto>>(items);
-
-        return Ok(new PagedResult<QuestionGetDto>
-        {
-            Items = questionDtos,
-            TotalCount = totalCount,
-            PageNumber = page,
-            PageSize = searchDto.PageSize
-        });
+        var response = await _questionService.GetQuestionsAsync(request);
+        return Ok(response);
     }
 
-
     [HttpGet("{id}")]
-    public async Task<ActionResult<QuestionGetDto>> GetById(long id)
+    public async Task<ActionResult<ApiResponse<QuestionGetDto>>> GetById(long id)
     {
-        var question = await _unitOfWork.Questions.GetByIdAsync(id);
-        if (question == null)
-            return NotFound(new { message = "السؤال غير موجود" }); // Question not found
-
-        var questionDto = _mapper.Map<QuestionGetDto>(question);
-        return Ok(questionDto);
+        var response = await _questionService.GetQuestionByIdAsync(id);
+        if (!response.Success)
+            return NotFound(response);
+        return Ok(response);
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<QuestionGetDto>> Create([FromBody] QuestionCreateDto createDto)
+    public async Task<ActionResult<ApiResponse<QuestionGetDto>>> Create([FromBody] QuestionCreateDto createDto)
     {
-        var validationResult = ValidateQuestion(createDto.Type, createDto.Options, createDto.CorrectAnswer);
-        if (!string.IsNullOrEmpty(validationResult))
-        {
-             return BadRequest(new { message = validationResult });
-        }
-
-        var question = _mapper.Map<Question>(createDto);
-        await _unitOfWork.Questions.AddAsync(question);
-        await _unitOfWork.CommitAsync();
-
-        var questionDto = _mapper.Map<QuestionGetDto>(question);
-        return CreatedAtAction(nameof(GetById), new { id = question.Id }, questionDto);
+        var response = await _questionService.CreateQuestionAsync(createDto);
+        if (!response.Success)
+             return BadRequest(response);
+             
+        return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
     }
 
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<ActionResult<QuestionGetDto>> Update(long id, [FromBody] QuestionUpdateDto updateDto)
+    public async Task<ActionResult<ApiResponse<QuestionGetDto>>> Update(long id, [FromBody] QuestionUpdateDto updateDto)
     {
-        var question = await _unitOfWork.Questions.GetByIdAsync(id);
-        if (question == null)
-            return NotFound(new { message = "السؤال غير موجود" });
-
-        var validationResult = ValidateQuestion(updateDto.Type, updateDto.Options, updateDto.CorrectAnswer);
-        if (!string.IsNullOrEmpty(validationResult))
+        var response = await _questionService.UpdateQuestionAsync(id, updateDto);
+        if (!response.Success)
         {
-             return BadRequest(new { message = validationResult });
+            if (response.Message == "السؤال غير موجود") return NotFound(response);
+            return BadRequest(response);
         }
-
-        _mapper.Map(updateDto, question);
-        _unitOfWork.Questions.Update(question);
-        await _unitOfWork.CommitAsync();
-
-        var questionDto = _mapper.Map<QuestionGetDto>(question);
-        return Ok(questionDto);
+        return Ok(response);
     }
 
     [Authorize]
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(long id)
+    public async Task<ActionResult<ApiResponse<bool>>> Delete(long id)
     {
-        var question = await _unitOfWork.Questions.GetByIdAsync(id);
-        if (question == null)
-            return NotFound(new { message = "السؤال غير موجود" });
-
-        _unitOfWork.Questions.Remove(question);
-        await _unitOfWork.CommitAsync();
-
-        return Ok(new { message = "تم حذف السؤال بنجاح" }); // Question deleted successfully
+        var response = await _questionService.DeleteQuestionAsync(id);
+        if (!response.Success)
+             return NotFound(response);
+        return Ok(response);
     }
 
-    [HttpGet("difficulty/{difficulty}")]
-    public async Task<ActionResult<IEnumerable<QuestionGetDto>>> GetByDifficulty(DifficultyLevel difficulty)
+    [Authorize]
+    [HttpPost("bulk-import")]
+    public async Task<ActionResult<ApiResponse<BulkImportResultDto>>> BulkImport([FromBody] List<QuestionCreateDto> questions)
     {
-        var questions = await _unitOfWork.Questions.GetByDifficultyAsync(difficulty);
-        var questionDtos = _mapper.Map<IEnumerable<QuestionGetDto>>(questions);
-        return Ok(questionDtos);
+        var response = await _questionService.BulkImportQuestionsAsync(questions);
+        return Ok(response);
     }
 
-    [HttpGet("type/{type}")]
-    public async Task<ActionResult<IEnumerable<QuestionGetDto>>> GetByType(QuestionType type)
+    [Authorize]
+    [HttpGet("export")]
+    public async Task<ActionResult> Export(
+        [FromQuery] string format = "csv",
+        [FromQuery] string? search = null)
     {
-        var questions = await _unitOfWork.Questions.GetByTypeAsync(type);
-        var questionDtos = _mapper.Map<IEnumerable<QuestionGetDto>>(questions);
-        return Ok(questionDtos);
-    }
-
-    [HttpGet("filter")]
-    public async Task<ActionResult<IEnumerable<QuestionGetDto>>> GetFiltered(
-        [FromQuery] int grade,
-        [FromQuery] int subject,
-        [FromQuery] int testType)
-    {
-        var gradeLevel = (GradeLevel)grade;
-        var subjectType = (SubjectType)subject;
-        var testTypeEnum = (TestType)testType;
-
-        var questions = await _unitOfWork.Questions.GetFilteredAsync(gradeLevel, subjectType, testTypeEnum);
-        var questionDtos = _mapper.Map<IEnumerable<QuestionGetDto>>(questions);
-        return Ok(questionDtos);
-    }
-
-    [HttpPost("search")]
-    public async Task<ActionResult<PagedResult<QuestionGetDto>>> Search([FromBody] QuestionSearchRequestDto searchDto)
-    {
-        var (items, totalCount) = await _unitOfWork.Questions.SearchAsync(searchDto);
-        var questionDtos = _mapper.Map<IEnumerable<QuestionGetDto>>(items);
-
-        return Ok(new PagedResult<QuestionGetDto>
+        // For now, simpler client-side export is preferred, but this endpoint exists for future server-side expansion
+        try 
         {
-            Items = questionDtos,
-            TotalCount = totalCount,
-            PageNumber = searchDto.Page,
-            PageSize = searchDto.PageSize
-        });
+            var request = new QuestionSearchRequestDto { SearchTerm = search };
+            var response = await _questionService.ExportQuestionsAsync(format, request);
+            
+            string contentType = format.ToLower() == "json" ? "application/json" : "text/csv";
+            string fileName = $"questions_export_{DateTime.UtcNow:yyyyMMdd}.{format}";
+            
+            return File(response.Data!, contentType, fileName);
+        }
+        catch (NotImplementedException)
+        {
+             return BadRequest(new ApiResponse<object> { Success = false, Message = "Server-side export not implemented yet" });
+        }
     }
 
-    /// <summary>
-    /// Get question counts grouped by grade and subject for dashboard
-    /// </summary>
-    /// <summary>
-    /// Get available subjects for games
-    /// </summary>
+    [HttpGet("stats")]
+    public async Task<ActionResult<ApiResponse<object>>> GetStats()
+    {
+        var response = await _questionService.GetQuestionStatsAsync();
+        return Ok(response);
+    }
+
+    // Helper endpoints maintained for frontend compatibility or convenience
     [HttpGet("subjects")]
     public ActionResult GetSubjects()
     {
-        var subjects = Enum.GetValues<SubjectType>()
+        var subjects = Enum.GetValues<Modules.SubjectType>()
             .Select(s => new
             {
                 Id = (int)s,
                 Name = s switch
                 {
-                    SubjectType.Arabic => "لغة عربية",
-                    SubjectType.Math => "رياضيات",
-                    SubjectType.Science => "علوم",
+                    Modules.SubjectType.Arabic => "لغة عربية",
+                    Modules.SubjectType.Math => "رياضيات",
+                    Modules.SubjectType.Science => "علوم",
                     _ => s.ToString()
                 },
                 NameEn = s.ToString(),
                 Icon = s switch
                 {
-                    SubjectType.Arabic => "📚",
-                    SubjectType.Math => "🔢",
-                    SubjectType.Science => "🔬",
+                    Modules.SubjectType.Arabic => "📚",
+                    Modules.SubjectType.Math => "🔢",
+                    Modules.SubjectType.Science => "🔬",
                     _ => "📖"
                 }
             })
@@ -202,99 +154,22 @@ public class QuestionController : ControllerBase
         return Ok(subjects);
     }
 
-    [HttpGet("stats")]
-    public async Task<ActionResult> GetStats()
-    {
-        var questions = await _unitOfWork.Questions.GetAllAsync();
-        var activeQuestions = questions.Where(q => !q.IsDeleted).ToList();
-
-        var stats = new
-        {
-            TotalCount = activeQuestions.Count,
-            ByGrade = new[] { 3, 4, 5, 6 }.Select(g => new
-            {
-                Grade = g,
-                Count = activeQuestions.Count(q => (int)q.Grade == g),
-                BySubject = new[] { 1, 2, 3 }.Select(s => new
-                {
-                    Subject = s,
-                    SubjectName = s == 1 ? "لغة عربية" : s == 2 ? "رياضيات" : "علوم",
-                    Count = activeQuestions.Count(q => (int)q.Grade == g && (int)q.Subject == s)
-                }).ToList()
-            }).ToList()
-        };
-
-        return Ok(stats);
-    }
-
-    [Authorize]
-    [HttpPost("restore/{id}")]
-    public async Task<ActionResult> Restore(long id)
-    {
-        var question = await _unitOfWork.Questions.GetIncludeDeletedAsync(id);
-        if (question == null)
-            return NotFound(new { message = "السؤال غير موجود" });
-
-        question.IsDeleted = false;
-        // Optional: Update DeletedAt to null or keep history? 
-        // BaseModel usually keeps DeletedAt. Let's just unset IsDeleted.
-        // If DeletedAt is nullable, set to null.
-        question.DeletedAt = null; 
-        
-        _unitOfWork.Questions.Update(question);
-        await _unitOfWork.CommitAsync();
-
-        return Ok(new { message = "تم استعادة السؤال بنجاح" });
-    }
-
     [HttpGet("analytics/{id}")]
     public async Task<ActionResult> GetQuestionAnalytics(long id)
     {
-        // Future: Calculate real stats from TestResults
-        // For now return basic info or placeholders
-        var question = await _unitOfWork.Questions.GetByIdAsync(id);
-        if (question == null) return NotFound();
+        var response = await _questionService.GetQuestionByIdAsync(id);
+        if (!response.Success) return NotFound();
 
-        // Mock data for UI development
+        // Mock data logic preserved
         var analytics = new 
         {
             Id = id,
             UsageCount = new Random().Next(10, 500),
             SuccessRate = new Random().Next(60, 95),
             AvgTimeSeconds = new Random().Next(15, 120),
-            DifficultyRating = question.Difficulty.ToString()
+            DifficultyRating = response.Data?.DifficultyName ?? "Unknown"
         };
 
         return Ok(analytics);
     }
-
-    private string? ValidateQuestion(QuestionType type, string? options, string? correctAnswer)
-    {
-        if (type == QuestionType.MultipleChoice || type == QuestionType.TrueFalse || type == QuestionType.FillInTheBlank)
-        {
-            if (string.IsNullOrWhiteSpace(options))
-            {
-                return "الخيارات مطلوبة لهذا النوع من الأسئلة"; // Options required
-            }
-
-            try 
-            {
-                // Verify partial JSON structure mainly to ensure it's valid JSON
-                // You can add more specific schema validation here if needed
-                JsonDocument.Parse(options);
-            }
-            catch
-            {
-                return "تنسيق الخيارات غير صالح (JSON)"; // Invalid JSON
-            }
-
-            if (string.IsNullOrWhiteSpace(correctAnswer))
-            {
-                return "الإجابة الصحيحة مطلوبة"; // Correct answer required
-            }
-        }
-        
-        return null;
-    }
 }
-

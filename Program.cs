@@ -34,6 +34,9 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<ISanitizationService, SanitizationService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 // Configure MailSettings
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

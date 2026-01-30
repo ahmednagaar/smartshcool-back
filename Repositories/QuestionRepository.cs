@@ -3,6 +3,8 @@ using Nafes.API.Data;
 using Nafes.API.Modules;
 using Microsoft.IdentityModel.Tokens;
 
+using Nafes.API.DTOs.Question;
+
 namespace Nafes.API.Repositories;
 
 public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
@@ -32,7 +34,7 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
             .ToListAsync();
     }
 
-    public async Task<(IEnumerable<Question> Items, int TotalCount)> SearchAsync(DTOs.Question.QuestionSearchRequestDto searchDto)
+    public async Task<(IEnumerable<Question> Items, int TotalCount)> SearchAsync(QuestionSearchRequestDto searchDto)
     {
         var query = _dbSet.AsQueryable();
 
