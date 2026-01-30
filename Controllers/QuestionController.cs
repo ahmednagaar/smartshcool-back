@@ -172,6 +172,37 @@ public class QuestionController : ControllerBase
     /// <summary>
     /// Get question counts grouped by grade and subject for dashboard
     /// </summary>
+    /// <summary>
+    /// Get available subjects for games
+    /// </summary>
+    [HttpGet("subjects")]
+    public ActionResult GetSubjects()
+    {
+        var subjects = Enum.GetValues<SubjectType>()
+            .Select(s => new
+            {
+                Id = (int)s,
+                Name = s switch
+                {
+                    SubjectType.Arabic => "لغة عربية",
+                    SubjectType.Math => "رياضيات",
+                    SubjectType.Science => "علوم",
+                    _ => s.ToString()
+                },
+                NameEn = s.ToString(),
+                Icon = s switch
+                {
+                    SubjectType.Arabic => "📚",
+                    SubjectType.Math => "🔢",
+                    SubjectType.Science => "🔬",
+                    _ => "📖"
+                }
+            })
+            .ToList();
+
+        return Ok(subjects);
+    }
+
     [HttpGet("stats")]
     public async Task<ActionResult> GetStats()
     {
