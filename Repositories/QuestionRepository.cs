@@ -74,9 +74,21 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
         // Get total count before pagination
         var totalCount = await query.CountAsync();
 
+        // Apply sorting
+        query = searchDto.SortBy?.ToLower() switch
+        {
+            "text" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.Text) : query.OrderByDescending(q => q.Text),
+            "grade" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.Grade) : query.OrderByDescending(q => q.Grade),
+            "subject" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.Subject) : query.OrderByDescending(q => q.Subject),
+            "type" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.Type) : query.OrderByDescending(q => q.Type),
+            "difficulty" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.Difficulty) : query.OrderByDescending(q => q.Difficulty),
+            "createddate" => searchDto.SortOrder == "asc" ? query.OrderBy(q => q.CreatedDate) : query.OrderByDescending(q => q.CreatedDate),
+            _ => query.OrderByDescending(q => q.CreatedDate)
+        };
+
         // Apply pagination
         var items = await query
-            .OrderByDescending(q => q.CreatedDate)
+            //.OrderByDescending(q => q.CreatedDate) // Removed as we handle sorting above
             .Skip((searchDto.Page - 1) * searchDto.PageSize)
             .Take(searchDto.PageSize)
             .ToListAsync();

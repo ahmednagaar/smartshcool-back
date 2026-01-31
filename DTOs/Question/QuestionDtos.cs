@@ -48,11 +48,10 @@ public class QuestionCreateDto
     [Required(ErrorMessage = "نوع الاختبار مطلوب")]
     public TestType TestType { get; set; }
 
-    [Url(ErrorMessage = "رابط الوسائط غير صالح")]
     [StringLength(2048)]
     public string? MediaUrl { get; set; }
 
-    [ValidateJsonArray(minCount: 1, maxCount: 10, ErrorMessage = "الخيارات غير صالحة")]
+    [ValidateJsonArray(minCount: 0, maxCount: 10, ErrorMessage = "الخيارات غير صالحة")]
     public string? Options { get; set; }
 
     [Required(ErrorMessage = "الإجابة الصحيحة مطلوبة")]
@@ -84,11 +83,10 @@ public class QuestionUpdateDto
     
     public TestType TestType { get; set; }
     
-    [Url(ErrorMessage = "رابط الوسائط غير صالح")]
     [StringLength(2048)]
     public string? MediaUrl { get; set; }
     
-    [ValidateJsonArray(minCount: 1, maxCount: 10)]
+    [ValidateJsonArray(minCount: 0, maxCount: 10)]
     public string? Options { get; set; }
     
     [StringLength(500)]
@@ -110,6 +108,8 @@ public class QuestionSearchRequestDto
     public GradeLevel? Grade { get; set; }
     public SubjectType? Subject { get; set; }
     public TestType? TestType { get; set; }
+    public string? SortBy { get; set; } = "CreatedDate";
+    public string? SortOrder { get; set; } = "desc";
 }
 
 public class BulkImportResultDto

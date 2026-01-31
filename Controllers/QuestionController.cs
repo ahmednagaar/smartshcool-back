@@ -27,7 +27,9 @@ public class QuestionController : ControllerBase
         [FromQuery] int? subject = null,
         [FromQuery] int? type = null,
         [FromQuery] int? difficulty = null,
-        [FromQuery] string? search = null)
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = "createddate",
+        [FromQuery] string? sortOrder = "desc")
     {
         var request = new QuestionSearchRequestDto
         {
@@ -37,12 +39,15 @@ public class QuestionController : ControllerBase
             Subject = subject.HasValue ? (Modules.SubjectType)subject.Value : null,
             Type = type.HasValue ? (Modules.QuestionType)type.Value : null,
             Difficulty = difficulty.HasValue ? (Modules.DifficultyLevel)difficulty.Value : null,
-            SearchTerm = search
+            SearchTerm = search,
+            SortBy = sortBy,
+            SortOrder = sortOrder
         };
 
         var response = await _questionService.GetQuestionsAsync(request);
         return Ok(response);
     }
+    
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<QuestionGetDto>>> GetById(long id)
@@ -57,6 +62,24 @@ public class QuestionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse<QuestionGetDto>>> Create([FromBody] QuestionCreateDto createDto)
     {
+        // Log validation errors for debugging
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+            _logger.LogWarning("Validation failed: {@Errors}", errors);
+            return BadRequest(new ApiResponse<QuestionGetDto> 
+            { 
+                Success = false, 
+                Message = "خطأ في التحقق من البيانات",
+                Errors = errors.SelectMany(e => e.Value).ToList()
+            });
+        }
+
         var response = await _questionService.CreateQuestionAsync(createDto);
         if (!response.Success)
              return BadRequest(response);
@@ -157,19 +180,15 @@ public class QuestionController : ControllerBase
     [HttpGet("analytics/{id}")]
     public async Task<ActionResult> GetQuestionAnalytics(long id)
     {
-        var response = await _questionService.GetQuestionByIdAsync(id);
-        if (!response.Success) return NotFound();
-
-        // Mock data logic preserved
-        var analytics = new 
-        {
-            Id = id,
-            UsageCount = new Random().Next(10, 500),
-            SuccessRate = new Random().Next(60, 95),
-            AvgTimeSeconds = new Random().Next(15, 120),
-            DifficultyRating = response.Data?.DifficultyName ?? "Unknown"
-        };
-
-        return Ok(analytics);
+        var response = await _questionService.GetQuestionAnalyticsAsync(id);
+        if (!response.Success) return NotFound(response);
+        return Ok(response.Data);
+    }
+    [Authorize]
+    [HttpPost("seed")]
+    public async Task<ActionResult<ApiResponse<bool>>> SeedMockData()
+    {
+        var response = await _questionService.SeedMockQuestionsAsync();
+        return Ok(response);
     }
 }

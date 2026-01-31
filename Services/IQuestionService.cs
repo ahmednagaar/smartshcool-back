@@ -13,4 +13,6 @@ public interface IQuestionService
     Task<ApiResponse<BulkImportResultDto>> BulkImportQuestionsAsync(List<QuestionCreateDto> questions);
     Task<ApiResponse<byte[]>> ExportQuestionsAsync(string format, QuestionSearchRequestDto request);
     Task<ApiResponse<object>> GetQuestionStatsAsync();
+    Task<ApiResponse<object>> GetQuestionAnalyticsAsync(long questionId);
+    Task<ApiResponse<bool>> SeedMockQuestionsAsync();
 }
