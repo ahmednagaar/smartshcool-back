@@ -214,8 +214,31 @@ public static class DbSeeder
             await context.SaveChangesAsync();
         }
 
-        // Seed Wheel Questions (Sample)
-        if (!context.WheelQuestions.Any() || !context.WheelQuestions.Any(q => q.GradeId == GradeLevel.Grade6))
+        // Seed Wheel Questions (Force re-seed to ensure TestType is set correctly)
+        // First delete dependent records (WheelQuestionAttempts, WheelGameSessions)
+        var existingAttempts = context.WheelQuestionAttempts.ToList();
+        if (existingAttempts.Any())
+        {
+            context.WheelQuestionAttempts.RemoveRange(existingAttempts);
+            await context.SaveChangesAsync();
+        }
+        
+        var existingSessions = context.WheelGameSessions.ToList();
+        if (existingSessions.Any())
+        {
+            context.WheelGameSessions.RemoveRange(existingSessions);
+            await context.SaveChangesAsync();
+        }
+        
+        // Now delete wheel questions
+        var existingQuestions = context.WheelQuestions.ToList();
+        if (existingQuestions.Any())
+        {
+            context.WheelQuestions.RemoveRange(existingQuestions);
+            await context.SaveChangesAsync();
+        }
+        
+        // Re-seed with correct TestType values
         {
             var questions = new List<WheelQuestion>
             {
@@ -248,23 +271,19 @@ public static class DbSeeder
                 new WheelQuestion { QuestionText = "جذر 16 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "4", WrongAnswers = "[\"2\", \"8\", \"16\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Medium },
 
                 // Grade 6 - Science
-                new WheelQuestion { QuestionText = "الغاز الذي نتنفسه؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الأكسجين", WrongAnswers = "[\"الهيدروجين\", \"النيتروجين\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy }
-            };
-            context.WheelQuestions.AddRange(questions);
-            await context.SaveChangesAsync();
-        }
-
-        // Ensure Grade 3 exists
-        if (!context.WheelQuestions.Any(q => q.GradeId == GradeLevel.Grade3))
-        {
-            var g3Questions = new List<WheelQuestion>
-            {
+                new WheelQuestion { QuestionText = "الغاز الذي نتنفسه؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الأكسجين", WrongAnswers = "[\"الهيدروجين\", \"النيتروجين\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                
+                // Grade 3 - Math
                 new WheelQuestion { QuestionText = "5 + 3 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "8", WrongAnswers = "[\"7\", \"9\", \"6\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
                 new WheelQuestion { QuestionText = "10 - 4 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "6", WrongAnswers = "[\"5\", \"7\", \"4\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy },
+                
+                // Grade 3 - Arabic
                 new WheelQuestion { QuestionText = "جمع كلمة كتاب؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "كتب", WrongAnswers = "[\"كاتب\", \"كتيب\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                
+                // Grade 3 - Science
                 new WheelQuestion { QuestionText = "ما لون الشمس؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "أصفر", WrongAnswers = "[\"أحمر\", \"أخضر\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy }
             };
-            context.WheelQuestions.AddRange(g3Questions);
+            context.WheelQuestions.AddRange(questions);
             await context.SaveChangesAsync();
         }
     }

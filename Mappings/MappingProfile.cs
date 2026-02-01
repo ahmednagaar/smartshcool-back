@@ -50,12 +50,35 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.GameTitle, opt => opt.MapFrom(src => src.Game.Title));
         
         CreateMap<TestResultCreateDto, TestResult>();
-
+        
         // WheelQuestion mappings
         CreateMap<WheelQuestion, WheelQuestionResponseDto>()
             .ForMember(dest => dest.GradeId, opt => opt.MapFrom(src => (int)src.GradeId))
             .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => (int)src.SubjectId))
             .ForMember(dest => dest.Options, opt => opt.MapFrom(src => BuildShuffledOptions(src.CorrectAnswer, src.WrongAnswers)));
+        
+        // CreateWheelQuestionDto -> WheelQuestion
+        CreateMap<CreateWheelQuestionDto, WheelQuestion>()
+            .ForMember(dest => dest.GradeId, opt => opt.MapFrom(src => (GradeLevel)src.GradeId))
+            .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => (SubjectType)src.SubjectId))
+            .ForMember(dest => dest.DifficultyLevel, opt => opt.MapFrom(src => src.DifficultyLevel))
+            .ForMember(dest => dest.TestType, opt => opt.MapFrom(src => src.TestType ?? TestType.Nafes))
+            .ForMember(dest => dest.WrongAnswers, opt => opt.MapFrom(src => SerializeWrongAnswers(src.WrongAnswers)))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
+        
+        // UpdateWheelQuestionDto -> WheelQuestion
+        CreateMap<UpdateWheelQuestionDto, WheelQuestion>()
+            .ForMember(dest => dest.GradeId, opt => opt.MapFrom(src => (GradeLevel)src.GradeId))
+            .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => (SubjectType)src.SubjectId))
+            .ForMember(dest => dest.DifficultyLevel, opt => opt.MapFrom(src => src.DifficultyLevel))
+            .ForMember(dest => dest.TestType, opt => opt.MapFrom(src => src.TestType ?? TestType.Nafes))
+            .ForMember(dest => dest.WrongAnswers, opt => opt.MapFrom(src => SerializeWrongAnswers(src.WrongAnswers)))
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+    }
+
+    private static string SerializeWrongAnswers(List<string> wrongAnswers)
+    {
+        return JsonSerializer.Serialize(wrongAnswers ?? new List<string>());
     }
 
     private static List<string> BuildShuffledOptions(string correctAnswer, string wrongAnswersJson)

@@ -49,10 +49,17 @@ public class WheelQuestionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<WheelQuestionResponseDto>> Create([FromBody] CreateWheelQuestionDto dto)
     {
-        // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";
-        var userId = "system"; // Temp
-        var result = await _service.CreateAsync(dto, userId);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        try
+        {
+            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";
+            var userId = "system"; // Temp
+            var result = await _service.CreateAsync(dto, userId);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace, inner = ex.InnerException?.Message });
+        }
     }
 
     [HttpPut("{id}")]

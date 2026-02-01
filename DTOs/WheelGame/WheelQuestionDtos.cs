@@ -35,6 +35,8 @@ public class CreateWheelQuestionDto
     public string? CategoryTag { get; set; }
     
     public int? DisplayOrder { get; set; }
+    
+    public TestType? TestType { get; set; }
 }
 
 public class UpdateWheelQuestionDto : CreateWheelQuestionDto
