@@ -61,56 +61,65 @@ public static class DbSeeder
         // Seed Questions
         var questions = new List<Question>
         {
-            // === MATH QUESTIONS ===
-            
-            // Grade 3 - Math - Nafes
-            new Question { Text = "ما هو ناتج 5 + 3؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"6\", \"7\", \"8\", \"9\"]", CorrectAnswer = "8", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "أكمل النمط: 2, 4, 6, ...", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"7\", \"8\", \"9\", \"10\"]", CorrectAnswer = "8", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            
-            // Grade 3 - Math - Central
-            new Question { Text = "ما هو ناتج 10 - 4؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"5\", \"6\", \"7\", \"8\"]", CorrectAnswer = "6", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
-            
-            // Grade 4 - Math - Central
-            new Question { Text = "ما هو ناتج 12 × 4؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"44\", \"46\", \"48\", \"50\"]", CorrectAnswer = "48", Grade = GradeLevel.Grade4, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "قيمة الرقم 5 في العدد 543 هي:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"5\", \"50\", \"500\", \"5000\"]", CorrectAnswer = "500", Grade = GradeLevel.Grade4, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            // Grade 3 - Arabic
+            new Question { Text = "ما جمع كلمة \"كتاب\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"كتاب\", \"كتب\", \"كاتب\"]", CorrectAnswer = "كتب", Grade = GradeLevel.Grade3, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما عكس كلمة \"كبير\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"طويل\", \"صغير\", \"سريع\"]", CorrectAnswer = "صغير", Grade = GradeLevel.Grade3, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "أيهما اسم؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"يكتب\", \"مدرسة\", \"يذهب\"]", CorrectAnswer = "مدرسة", Grade = GradeLevel.Grade3, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 5 - Math - Central
-            new Question { Text = "ما هو ناتج 144 ÷ 12؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"10\", \"11\", \"12\", \"13\"]", CorrectAnswer = "12", Grade = GradeLevel.Grade5, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
-            
-            // Grade 6 - Math - Nafes
-            new Question { Text = "إذا كان س = 5، فما قيمة 2س + 3؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Hard, Options = "[\"10\", \"11\", \"12\", \"13\"]", CorrectAnswer = "13", Grade = GradeLevel.Grade6, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "مساحة مربع طول ضلعه 4 سم تساوي:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"12 سم²\", \"16 سم²\", \"20 سم²\", \"8 سم²\"]", CorrectAnswer = "16 سم²", Grade = GradeLevel.Grade6, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            // Grade 3 - Science
+            new Question { Text = "ما الكوكب الذي نعيش عليه؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"القمر\", \"الأرض\", \"الشمس\"]", CorrectAnswer = "الأرض", Grade = GradeLevel.Grade3, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "أي من الآتي حيوان؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"شجرة\", \"حجر\", \"قطة\"]", CorrectAnswer = "قطة", Grade = GradeLevel.Grade3, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما لون الشمس؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"أزرق\", \"أصفر\", \"أخضر\"]", CorrectAnswer = "أصفر", Grade = GradeLevel.Grade3, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // === SCIENCE QUESTIONS ===
+            // Grade 3 - Math
+            new Question { Text = "5 + 3 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"6\", \"7\", \"8\"]", CorrectAnswer = "8", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "10 − 4 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"5\", \"6\", \"7\"]", CorrectAnswer = "6", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "أيهما أكبر؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"6\", \"8\", \"9\"]", CorrectAnswer = "9", Grade = GradeLevel.Grade3, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 3 - Science - Nafes (Usually Grade 3 has basic science)
-            new Question { Text = "الحيوان الذي يغطي جسمه الريش هو:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"السمكة\", \"العصفور\", \"القطة\", \"الثعبان\"]", CorrectAnswer = "العصفور", Grade = GradeLevel.Grade3, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            // Grade 4 - Arabic
+            new Question { Text = "ما جمع كلمة \"ولد\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"ولود\", \"أولاد\", \"ولدين\"]", CorrectAnswer = "أولاد", Grade = GradeLevel.Grade4, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما نوع كلمة \"يلعب\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"اسم\", \"فعل\", \"حرف\"]", CorrectAnswer = "فعل", Grade = GradeLevel.Grade4, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما مرادف كلمة \"سعيد\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"حزين\", \"فرحان\", \"غاضب\"]", CorrectAnswer = "فرحان", Grade = GradeLevel.Grade4, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 4 - Science - Central
-            new Question { Text = "كم عدد كواكب المجموعة الشمسية؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"7\", \"8\", \"9\", \"10\"]", CorrectAnswer = "8", Grade = GradeLevel.Grade4, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "الجزء المسؤول عن صنع الغذاء في النبات هو:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"الجذر\", \"الساق\", \"الورقة\", \"الزهرة\"]", CorrectAnswer = "الورقة", Grade = GradeLevel.Grade4, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            // Grade 4 - Science
+            new Question { Text = "ما الحالة السائلة للماء؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"بخار\", \"ثلج\", \"ماء\"]", CorrectAnswer = "ماء", Grade = GradeLevel.Grade4, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "أي عضو نستخدمه للتنفس؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"القلب\", \"الرئة\", \"المعدة\"]", CorrectAnswer = "الرئة", Grade = GradeLevel.Grade4, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما مصدر الضوء الطبيعي؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"المصباح\", \"الشمس\", \"القمر\"]", CorrectAnswer = "الشمس", Grade = GradeLevel.Grade4, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 5 - Science - Central
-            new Question { Text = "حالة المادة التي لها شكل ثابت وحجم ثابت هي:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"الصلبة\", \"السائلة\", \"الغازية\", \"البلازما\"]", CorrectAnswer = "الصلبة", Grade = GradeLevel.Grade5, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            // Grade 4 - Math
+            new Question { Text = "6 × 2 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"8\", \"10\", \"12\"]", CorrectAnswer = "12", Grade = GradeLevel.Grade4, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "15 ÷ 3 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"4\", \"5\", \"6\"]", CorrectAnswer = "5", Grade = GradeLevel.Grade4, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "20 + 15 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"30\", \"35\", \"40\"]", CorrectAnswer = "35", Grade = GradeLevel.Grade4, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 6 - Science - Nafes
-            new Question { Text = "وحدة قياس القوة هي:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"المتر\", \"الكيلوجرام\", \"النيوتن\", \"الثانية\"]", CorrectAnswer = "النيوتن", Grade = GradeLevel.Grade6, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "أي مما يلي يعتبر تغيراً كيميائياً؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Hard, Options = "[\"انصهار الثلج\", \"هطول المطر\", \"صدا الحديد\", \"تمزق الورق\"]", CorrectAnswer = "صدا الحديد", Grade = GradeLevel.Grade6, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            // Grade 5 - Arabic
+            new Question { Text = "ما مفرد كلمة \"أقلام\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"قلم\", \"قلام\", \"قلمون\"]", CorrectAnswer = "قلم", Grade = GradeLevel.Grade5, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما ضد كلمة \"نشاط\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"تعب\", \"كسل\", \"سرعة\"]", CorrectAnswer = "كسل", Grade = GradeLevel.Grade5, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "الجملة \"الطالب مجتهد\" هي؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"فعلية\", \"اسمية\", \"استفهامية\"]", CorrectAnswer = "اسمية", Grade = GradeLevel.Grade5, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // === ARABIC QUESTIONS ===
+            // Grade 5 - Science
+            new Question { Text = "ما الغاز اللازم للتنفس؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"النيتروجين\", \"الأكسجين\", \"الهيدروجين\"]", CorrectAnswer = "الأكسجين", Grade = GradeLevel.Grade5, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما الكوكب الأحمر؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"الزهرة\", \"المريخ\", \"عطارد\"]", CorrectAnswer = "المريخ", Grade = GradeLevel.Grade5, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "أي من الآتي نبات؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"قط\", \"حجر\", \"شجرة\"]", CorrectAnswer = "شجرة", Grade = GradeLevel.Grade5, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 3 - Arabic - Nafes
-            new Question { Text = "كلمة (المدرسة) بدأت بلام:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"شمسية\", \"قمرية\", \"أصلية\", \"زائدة\"]", CorrectAnswer = "قمرية", Grade = GradeLevel.Grade3, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            
-            // Grade 4 - Arabic - Central
-            new Question { Text = "ما هو جمع كلمة 'كتاب'؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"كتب\", \"كتابات\", \"كتبة\", \"كاتب\"]", CorrectAnswer = "كتب", Grade = GradeLevel.Grade4, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
-            
-            // Grade 5 - Arabic - Central
-            new Question { Text = "الفاعل في جملة (قرأ الطالب الدرس) هو:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"قرأ\", \"الدرس\", \"الطالب\", \"ضمير مستتر\"]", CorrectAnswer = "الطالب", Grade = GradeLevel.Grade5, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            // Grade 5 - Math
+            new Question { Text = "9 × 4 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"32\", \"36\", \"40\"]", CorrectAnswer = "36", Grade = GradeLevel.Grade5, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "50 − 18 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"30\", \"32\", \"34\"]", CorrectAnswer = "32", Grade = GradeLevel.Grade5, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "نصف العدد 20 هو؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"5\", \"10\", \"15\"]", CorrectAnswer = "10", Grade = GradeLevel.Grade5, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
 
-            // Grade 6 - Arabic - Nafes
-            new Question { Text = "علامة رفع المثنى هي:", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Hard, Options = "[\"الضمة\", \"الألف\", \"الواو\", \"الفتحة\"]", CorrectAnswer = "الألف", Grade = GradeLevel.Grade6, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
-            new Question { Text = "ضد كلمة (الأمانة):", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"الصدق\", \"الخيانة\", \"الوفاء\", \"الإخلاص\"]", CorrectAnswer = "الخيانة", Grade = GradeLevel.Grade6, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow }
+            // Grade 6 - Arabic
+            new Question { Text = "ما نوع كلمة \"الصدق\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Hard, Options = "[\"اسم\", \"فعل\", \"مصدر\"]", CorrectAnswer = "مصدر", Grade = GradeLevel.Grade6, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما جمع كلمة \"مدينة\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"مدائن\", \"مدن\", \"مدينة\"]", CorrectAnswer = "مدن", Grade = GradeLevel.Grade6, Subject = SubjectType.Arabic, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "مرادف كلمة \"شجاع\"؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"خائف\", \"جريء\", \"ضعيف\"]", CorrectAnswer = "جريء", Grade = GradeLevel.Grade6, Subject = SubjectType.Arabic, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+
+            // Grade 6 - Science
+            new Question { Text = "ما العضو المسؤول عن ضخ الدم؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"الرئة\", \"القلب\", \"المخ\"]", CorrectAnswer = "القلب", Grade = GradeLevel.Grade6, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما الوحدة الأساسية لقياس الطول؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"الكيلو\", \"المتر\", \"الجرام\"]", CorrectAnswer = "المتر", Grade = GradeLevel.Grade6, Subject = SubjectType.Science, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "ما الكوكب الأكبر في المجموعة الشمسية؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"الأرض\", \"زحل\", \"المشتري\"]", CorrectAnswer = "المشتري", Grade = GradeLevel.Grade6, Subject = SubjectType.Science, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+
+            // Grade 6 - Math
+            new Question { Text = "12 × 5 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Medium, Options = "[\"50\", \"60\", \"70\"]", CorrectAnswer = "60", Grade = GradeLevel.Grade6, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "100 ÷ 4 = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Easy, Options = "[\"20\", \"25\", \"30\"]", CorrectAnswer = "25", Grade = GradeLevel.Grade6, Subject = SubjectType.Math, TestType = TestType.Central, CreatedDate = DateTime.UtcNow },
+            new Question { Text = "3² = ؟", Type = QuestionType.MultipleChoice, Difficulty = DifficultyLevel.Hard, Options = "[\"6\", \"9\", \"12\"]", CorrectAnswer = "9", Grade = GradeLevel.Grade6, Subject = SubjectType.Math, TestType = TestType.Nafes, CreatedDate = DateTime.UtcNow }
         };
         context.Questions.AddRange(questions);
         await context.SaveChangesAsync();

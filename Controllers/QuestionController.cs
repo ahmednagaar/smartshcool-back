@@ -26,6 +26,7 @@ public class QuestionController : ControllerBase
         [FromQuery] int? grade = null,
         [FromQuery] int? subject = null,
         [FromQuery] int? type = null,
+        [FromQuery] int? testType = null, // Added testType parameter
         [FromQuery] int? difficulty = null,
         [FromQuery] string? search = null,
         [FromQuery] string? sortBy = "createddate",
@@ -38,6 +39,7 @@ public class QuestionController : ControllerBase
             Grade = grade.HasValue ? (Modules.GradeLevel)grade.Value : null,
             Subject = subject.HasValue ? (Modules.SubjectType)subject.Value : null,
             Type = type.HasValue ? (Modules.QuestionType)type.Value : null,
+            TestType = testType.HasValue ? (Modules.TestType)testType.Value : null, // Mapped to DTO
             Difficulty = difficulty.HasValue ? (Modules.DifficultyLevel)difficulty.Value : null,
             SearchTerm = search,
             SortBy = sortBy,
