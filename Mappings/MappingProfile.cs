@@ -3,7 +3,9 @@ using Nafes.API.DTOs.Student;
 using Nafes.API.DTOs.Question;
 using Nafes.API.DTOs.Game;
 using Nafes.API.DTOs.TestResult;
+using Nafes.API.DTOs.WheelGame;
 using Nafes.API.Modules;
+using System.Text.Json;
 
 namespace Nafes.API.Mappings;
 
@@ -48,6 +50,28 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.GameTitle, opt => opt.MapFrom(src => src.Game.Title));
         
         CreateMap<TestResultCreateDto, TestResult>();
+
+        // WheelQuestion mappings
+        CreateMap<WheelQuestion, WheelQuestionResponseDto>()
+            .ForMember(dest => dest.GradeId, opt => opt.MapFrom(src => (int)src.GradeId))
+            .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => (int)src.SubjectId))
+            .ForMember(dest => dest.Options, opt => opt.MapFrom(src => BuildShuffledOptions(src.CorrectAnswer, src.WrongAnswers)));
+    }
+
+    private static List<string> BuildShuffledOptions(string correctAnswer, string wrongAnswersJson)
+    {
+        var options = new List<string> { correctAnswer };
+        try
+        {
+            var wrongAnswers = JsonSerializer.Deserialize<List<string>>(wrongAnswersJson ?? "[]");
+            if (wrongAnswers != null)
+                options.AddRange(wrongAnswers);
+        }
+        catch { /* Ignore parse errors */ }
+        
+        // Shuffle
+        var rng = new Random();
+        return options.OrderBy(_ => rng.Next()).ToList();
     }
 }
 

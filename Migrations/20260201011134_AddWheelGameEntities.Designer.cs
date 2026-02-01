@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nafes.API.Data;
 
@@ -11,9 +12,11 @@ using Nafes.API.Data;
 namespace Nafes.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260201011134_AddWheelGameEntities")]
+    partial class AddWheelGameEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1048,7 +1051,7 @@ namespace Nafes.API.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("StudentId")
+                    b.Property<long>("StudentId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("SubjectId")
@@ -1141,9 +1144,6 @@ namespace Nafes.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TestType")
                         .HasColumnType("int");
 
                     b.Property<int>("TimeLimit")
@@ -1394,7 +1394,8 @@ namespace Nafes.API.Migrations
                     b.HasOne("Nafes.API.Modules.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Student");
                 });

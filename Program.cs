@@ -39,6 +39,15 @@ builder.Services.AddScoped<IMatchingGameSessionRepository, MatchingGameSessionRe
 builder.Services.AddScoped<IMatchingQuestionService, MatchingQuestionService>();
 builder.Services.AddScoped<IMatchingGameService, MatchingGameService>();
 
+// Wheel Game
+builder.Services.AddScoped<IWheelQuestionRepository, WheelQuestionRepository>();
+builder.Services.AddScoped<IWheelGameSessionRepository, WheelGameSessionRepository>();
+builder.Services.AddScoped<IWheelQuestionAttemptRepository, WheelQuestionAttemptRepository>();
+builder.Services.AddScoped<IWheelSpinSegmentRepository, WheelSpinSegmentRepository>();
+builder.Services.AddScoped<IWheelQuestionService, WheelQuestionService>(); 
+builder.Services.AddScoped<IWheelGameService, WheelGameService>();
+builder.Services.AddScoped<IWheelSpinSegmentService, WheelSpinSegmentService>();
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
@@ -81,10 +90,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("NafesPolicy", policy =>
     {
-        policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!)
+        policy.AllowAnyOrigin()
               .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowAnyHeader();
     });
 });
 

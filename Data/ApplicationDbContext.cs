@@ -29,6 +29,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<MatchingQuestion> MatchingQuestions { get; set; }
     public DbSet<MatchingGameSession> MatchingGameSessions { get; set; }
 
+    // Wheel Game
+    public DbSet<WheelQuestion> WheelQuestions { get; set; }
+    public DbSet<WheelGameSession> WheelGameSessions { get; set; }
+    public DbSet<WheelQuestionAttempt> WheelQuestionAttempts { get; set; }
+    public DbSet<WheelSpinSegment> WheelSpinSegments { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -162,6 +168,29 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Key).IsRequired().HasMaxLength(100);
             entity.HasIndex(e => e.Key).IsUnique(); // Key must be unique
+        // ... existing configurations ...
         });
+        
+        // Wheel Game Configuration
+        modelBuilder.Entity<WheelQuestion>()
+            .HasIndex(q => new { q.GradeId, q.SubjectId, q.IsActive });
+
+        modelBuilder.Entity<WheelGameSession>()
+            .HasOne(s => s.Student)
+            .WithMany()
+            .HasForeignKey(s => s.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WheelQuestionAttempt>()
+            .HasOne(a => a.Session)
+            .WithMany(s => s.Attempts)
+            .HasForeignKey(a => a.SessionId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<WheelQuestionAttempt>()
+            .HasOne(a => a.Question)
+            .WithMany()
+            .HasForeignKey(a => a.QuestionId)
+            .OnDelete(DeleteBehavior.NoAction); // Prevent cycles
     }
 }

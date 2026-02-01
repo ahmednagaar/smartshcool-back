@@ -196,5 +196,76 @@ public static class DbSeeder
             );
             await context.SaveChangesAsync();
         }
+        
+        // Seed Wheel Spin Segments
+        if (!context.WheelSpinSegments.Any())
+        {
+            var segments = new List<WheelSpinSegment>
+            {
+                new WheelSpinSegment { DisplayText = "10 نقاط", SegmentValue = 10, SegmentType = SegmentType.Points, ColorCode = "#FFC107", Probability = 0.3m },
+                new WheelSpinSegment { DisplayText = "20 نقطة", SegmentValue = 20, SegmentType = SegmentType.Points, ColorCode = "#4CAF50", Probability = 0.25m },
+                new WheelSpinSegment { DisplayText = "50 نقطة", SegmentValue = 50, SegmentType = SegmentType.Points, ColorCode = "#2196F3", Probability = 0.15m },
+                new WheelSpinSegment { DisplayText = "100 نقطة", SegmentValue = 100, SegmentType = SegmentType.Points, ColorCode = "#9C27B0", Probability = 0.05m },
+                new WheelSpinSegment { DisplayText = "مكافأة", SegmentValue = 20, SegmentType = SegmentType.Bonus, ColorCode = "#00BCD4", Probability = 0.1m },
+                new WheelSpinSegment { DisplayText = "نقاط مضاعفة", SegmentType = SegmentType.DoublePoints, ColorCode = "#FF5722", Probability = 0.05m },
+                new WheelSpinSegment { DisplayText = "خسارة الدور", SegmentType = SegmentType.LoseTurn, ColorCode = "#F44336", Probability = 0.1m }
+            };
+            context.WheelSpinSegments.AddRange(segments);
+            await context.SaveChangesAsync();
+        }
+
+        // Seed Wheel Questions (Sample)
+        if (!context.WheelQuestions.Any() || !context.WheelQuestions.Any(q => q.GradeId == GradeLevel.Grade6))
+        {
+            var questions = new List<WheelQuestion>
+            {
+                // Grade 4 - Arabic
+                new WheelQuestion { QuestionText = "ما عاصمة السعودية؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الرياض", WrongAnswers = "[\"جدة\", \"مكة\", \"الدمام\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy, CategoryTag = "جغرافيا", Explanation = "الرياض هي العاصمة." },
+                new WheelQuestion { QuestionText = "ضد كلمة شجاع؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "جبان", WrongAnswers = "[\"قوي\", \"سريع\", \"ذكي\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Arabic, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy },
+                
+                // Grade 4 - Science
+                new WheelQuestion { QuestionText = "حيوان يسمى سفينة الصحراء؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الجمل", WrongAnswers = "[\"الحصان\", \"الفيل\", \"الأسد\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                
+                // Grade 4 - Math
+                new WheelQuestion { QuestionText = "5 * 5 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "25", WrongAnswers = "[\"20\", \"30\", \"10\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                new WheelQuestion { QuestionText = "20 / 4 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "5", WrongAnswers = "[\"4\", \"6\", \"8\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy },
+
+                // Grade 5 - Arabic
+                new WheelQuestion { QuestionText = "الفاعل يكون دائماً؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "مرفوعاً", WrongAnswers = "[\"منصوباً\", \"مجروراً\", \"ساكناً\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium },
+
+                // Grade 5 - Math
+                new WheelQuestion { QuestionText = "محيط مربع ضلعه 5سم؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "20", WrongAnswers = "[\"25\", \"15\", \"10\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium },
+                new WheelQuestion { QuestionText = "100 - 45 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "55", WrongAnswers = "[\"45\", \"65\", \"50\"]", PointsValue = 10, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy },
+
+                // Grade 5 - Science
+                new WheelQuestion { QuestionText = "عدد كواكب المجموعة الشمسية؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "8", WrongAnswers = "[\"7\", \"9\", \"10\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium },
+
+                // Grade 6 - Arabic
+                new WheelQuestion { QuestionText = "إعراب المبتدأ؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "مرفوع", WrongAnswers = "[\"منصوب\", \"مجرور\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium },
+
+                // Grade 6 - Math
+                new WheelQuestion { QuestionText = "3 أس 2 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "9", WrongAnswers = "[\"6\", \"3\", \"12\"]", PointsValue = 20, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Hard },
+                new WheelQuestion { QuestionText = "جذر 16 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "4", WrongAnswers = "[\"2\", \"8\", \"16\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Medium },
+
+                // Grade 6 - Science
+                new WheelQuestion { QuestionText = "الغاز الذي نتنفسه؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الأكسجين", WrongAnswers = "[\"الهيدروجين\", \"النيتروجين\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy }
+            };
+            context.WheelQuestions.AddRange(questions);
+            await context.SaveChangesAsync();
+        }
+
+        // Ensure Grade 3 exists
+        if (!context.WheelQuestions.Any(q => q.GradeId == GradeLevel.Grade3))
+        {
+            var g3Questions = new List<WheelQuestion>
+            {
+                new WheelQuestion { QuestionText = "5 + 3 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "8", WrongAnswers = "[\"7\", \"9\", \"6\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                new WheelQuestion { QuestionText = "10 - 4 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "6", WrongAnswers = "[\"5\", \"7\", \"4\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy },
+                new WheelQuestion { QuestionText = "جمع كلمة كتاب؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "كتب", WrongAnswers = "[\"كاتب\", \"كتيب\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy },
+                new WheelQuestion { QuestionText = "ما لون الشمس؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "أصفر", WrongAnswers = "[\"أحمر\", \"أخضر\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy }
+            };
+            context.WheelQuestions.AddRange(g3Questions);
+            await context.SaveChangesAsync();
+        }
     }
 }
