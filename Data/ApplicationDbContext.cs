@@ -24,6 +24,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<SystemSetting> SystemSettings { get; set; }
     public DbSet<Visit> Visits { get; set; }
     public DbSet<AnalyticsEvent> AnalyticsEvents { get; set; }
+    
+    // Matching Game
+    public DbSet<MatchingQuestion> MatchingQuestions { get; set; }
+    public DbSet<MatchingGameSession> MatchingGameSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

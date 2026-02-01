@@ -31,6 +31,14 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register Services
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+
+// Matching Game
+builder.Services.AddScoped<IMatchingQuestionRepository, MatchingQuestionRepository>();
+builder.Services.AddScoped<IMatchingGameSessionRepository, MatchingGameSessionRepository>();
+builder.Services.AddScoped<IMatchingQuestionService, MatchingQuestionService>();
+builder.Services.AddScoped<IMatchingGameService, MatchingGameService>();
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
