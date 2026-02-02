@@ -1,0 +1,23 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+D:\SmartShcool\Nafes.API\DTOs\DragDrop\DragDropDtos.cs(105,21): warning CS0109: The member 'UpdateDragDropItemDto.CorrectZoneId' does not hide an accessible member. The new keyword is not required. [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Controllers\MatchingGameAdminController.cs(23,36): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Modules\MatchingGame.cs(50,19): warning CS0108: 'MatchingGame.CreatedBy' hides inherited member 'BaseModel.CreatedBy'. Use the new keyword if hiding was intended. [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Services\MatchingGameService.cs(20,10): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Services\MatchingGameService.cs(274,23): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Repositories\IMatchingGameRepository.cs(10,10): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Repositories\MatchingGameRepository.cs(35,23): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+
+Build FAILED.
+
+D:\SmartShcool\Nafes.API\DTOs\DragDrop\DragDropDtos.cs(105,21): warning CS0109: The member 'UpdateDragDropItemDto.CorrectZoneId' does not hide an accessible member. The new keyword is not required. [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Modules\MatchingGame.cs(50,19): warning CS0108: 'MatchingGame.CreatedBy' hides inherited member 'BaseModel.CreatedBy'. Use the new keyword if hiding was intended. [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Controllers\MatchingGameAdminController.cs(23,36): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Services\MatchingGameService.cs(20,10): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Services\MatchingGameService.cs(274,23): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Repositories\IMatchingGameRepository.cs(10,10): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+D:\SmartShcool\Nafes.API\Repositories\MatchingGameRepository.cs(35,23): error CS0246: The type or namespace name 'PaginatedResult<>' could not be found (are you missing a using directive or an assembly reference?) [D:\SmartShcool\Nafes.API\Nafes.API.csproj]
+    2 Warning(s)
+    5 Error(s)
+
+Time Elapsed 00:00:01.53

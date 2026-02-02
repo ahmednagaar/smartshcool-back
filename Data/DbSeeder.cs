@@ -214,6 +214,9 @@ public static class DbSeeder
             await context.SaveChangesAsync();
         }
 
+        // DISABLED: Force re-seed was deleting ALL user data on every restart!
+        // Use /api/WheelGame/seed endpoint for manual seeding instead.
+        /*
         // Seed Wheel Questions (Force re-seed to ensure TestType is set correctly)
         // First delete dependent records (WheelQuestionAttempts, WheelGameSessions)
         var existingAttempts = context.WheelQuestionAttempts.ToList();
@@ -284,6 +287,114 @@ public static class DbSeeder
                 new WheelQuestion { QuestionText = "ما لون الشمس؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "أصفر", WrongAnswers = "[\"أحمر\", \"أخضر\"]", PointsValue = 10, GradeId = GradeLevel.Grade3, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy }
             };
             context.WheelQuestions.AddRange(questions);
+            await context.SaveChangesAsync();
+        }
+        */ // END OF DISABLED WHEEL QUESTION SEEDER
+        
+        // Seed Drag & Drop Games
+        if (!context.DragDropQuestions.Any())
+        {
+            var dragDropQuestions = new List<DragDropQuestion>
+            {
+                // Grade 3 - Science - Classification
+                new DragDropQuestion 
+                { 
+                    Grade = GradeLevel.Grade3,
+                    Subject = SubjectType.Science,
+                    GameTitle = "تصنيف الكائنات الحية",
+                    Instructions = "اسحب الكائنات الحية إلى المجموعة الصحيحة: نباتات أو حيوانات.",
+                    NumberOfZones = 2,
+                    UITheme = "nature",
+                    TimeLimit = 60,
+                    PointsPerCorrectItem = 10,
+                    ShowImmediateFeedback = true,
+                    DisplayOrder = 1,
+                    IsActive = true,
+                    CreatedBy = 1,
+                    Zones = new List<DragDropZone>
+                    {
+                        new DragDropZone { Label = "نباتات", ColorCode = "#4CAF50", ZoneOrder = 1, IconUrl = "assets/icons/plant.png" },
+                        new DragDropZone { Label = "حيوانات", ColorCode = "#FF9800", ZoneOrder = 2, IconUrl = "assets/icons/animal.png" }
+                    },
+                    Items = new List<DragDropItem>
+                    {
+                        new DragDropItem { Text = "شجرة التفاح", CorrectZoneId = 0, ItemOrder = 1 }, // ZoneId will be fixed by EF navigation logic or we need careful seeding
+                        new DragDropItem { Text = "أسد", CorrectZoneId = 0, ItemOrder = 2 },
+                        new DragDropItem { Text = "وردة", CorrectZoneId = 0, ItemOrder = 3 },
+                        new DragDropItem { Text = "قطة", CorrectZoneId = 0, ItemOrder = 4 }
+                    }
+                },
+                
+                // Grade 4 - Arabic - Parts of Speech
+                new DragDropQuestion 
+                { 
+                    Grade = GradeLevel.Grade4,
+                    Subject = SubjectType.Arabic,
+                    GameTitle = "أقسام الكلام",
+                    Instructions = "صنف الكلمات التالية إلى: اسم، فعل، أو حرف.",
+                    NumberOfZones = 3,
+                    UITheme = "modern",
+                    TimeLimit = 90,
+                    PointsPerCorrectItem = 15,
+                    ShowImmediateFeedback = true,
+                    DisplayOrder = 1,
+                    IsActive = true,
+                    CreatedBy = 1,
+                    Zones = new List<DragDropZone>
+                    {
+                        new DragDropZone { Label = "اسم", ColorCode = "#2196F3", ZoneOrder = 1 },
+                        new DragDropZone { Label = "فعل", ColorCode = "#F44336", ZoneOrder = 2 },
+                        new DragDropZone { Label = "حرف", ColorCode = "#9C27B0", ZoneOrder = 3 }
+                    },
+                    Items = new List<DragDropItem>
+                    {
+                        new DragDropItem { Text = "محمد", CorrectZoneId = 0, ItemOrder = 1 },
+                        new DragDropItem { Text = "يكتب", CorrectZoneId = 0, ItemOrder = 2 },
+                        new DragDropItem { Text = "في", CorrectZoneId = 0, ItemOrder = 3 },
+                        new DragDropItem { Text = "مدرسة", CorrectZoneId = 0, ItemOrder = 4 },
+                        new DragDropItem { Text = "ذهب", CorrectZoneId = 0, ItemOrder = 5 }
+                    }
+                }
+            };
+
+            // Fix relationships manually since EF Core seeding with navigation properties works recursively but needs care for FKs
+            // Actually, adding graphs works if we rely on navigation.
+            // But Item.CorrectZoneId requires the Zone.Id which is generated.
+            // EF Core Fix-up usually handles this if we use navigation properties.
+            // Let's modify the object initialization to use navigation `CorrectZone` instead of ID.
+            
+            foreach (var q in dragDropQuestions)
+            {
+               // Manually link items to zones by index/logic since we can't guess ID
+               // Item 0 -> Zone 0, Item 1 -> Zone 1, etc.
+               
+               if (q.GameTitle == "تصنيف الكائنات الحية")
+               {
+                   // Plants: 0 and 2
+                   q.Items[0].CorrectZone = q.Zones[0];
+                   q.Items[2].CorrectZone = q.Zones[0];
+                   
+                   // Animals: 1 and 3
+                   q.Items[1].CorrectZone = q.Zones[1];
+                   q.Items[3].CorrectZone = q.Zones[1];
+               }
+               else if (q.GameTitle == "أقسام الكلام")
+               {
+                   // Noun (Zone 0): 0, 3
+                   q.Items[0].CorrectZone = q.Zones[0];
+                   q.Items[3].CorrectZone = q.Zones[0];
+                   
+                   // Verb (Zone 1): 1, 4
+                   q.Items[1].CorrectZone = q.Zones[1];
+                   q.Items[4].CorrectZone = q.Zones[1];
+                   
+                   // Particle (Zone 2): 2
+                   q.Items[2].CorrectZone = q.Zones[2];
+               }
+               
+               context.DragDropQuestions.Add(q);
+            }
+            
             await context.SaveChangesAsync();
         }
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Nafes.API.Modules;
 
 namespace Nafes.API.DTOs.WheelGame;
@@ -6,36 +7,49 @@ namespace Nafes.API.DTOs.WheelGame;
 public class CreateWheelQuestionDto
 {
     [Required]
+    [JsonPropertyName("gradeId")]
     public int GradeId { get; set; }
 
     [Required]
+    [JsonPropertyName("subjectId")]
     public int SubjectId { get; set; }
 
     [Required]
-    [MinLength(10)]
+    [JsonPropertyName("questionText")]
     public string QuestionText { get; set; } = string.Empty;
 
+    [JsonPropertyName("questionType")]
     public QuestionType QuestionType { get; set; }
 
     [Required]
+    [JsonPropertyName("correctAnswer")]
     public string CorrectAnswer { get; set; } = string.Empty;
 
+    [JsonPropertyName("wrongAnswers")]
     public List<string> WrongAnswers { get; set; } = new();
 
+    [JsonPropertyName("difficultyLevel")]
     public DifficultyLevel DifficultyLevel { get; set; }
 
+    [JsonPropertyName("pointsValue")]
     public int? PointsValue { get; set; }
 
+    [JsonPropertyName("timeLimit")]
     public int? TimeLimit { get; set; }
 
+    [JsonPropertyName("hintText")]
     public string? HintText { get; set; }
 
+    [JsonPropertyName("explanation")]
     public string? Explanation { get; set; }
 
+    [JsonPropertyName("categoryTag")]
     public string? CategoryTag { get; set; }
     
+    [JsonPropertyName("displayOrder")]
     public int? DisplayOrder { get; set; }
     
+    [JsonPropertyName("testType")]
     public TestType? TestType { get; set; }
 }
 

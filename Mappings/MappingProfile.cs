@@ -4,6 +4,8 @@ using Nafes.API.DTOs.Question;
 using Nafes.API.DTOs.Game;
 using Nafes.API.DTOs.TestResult;
 using Nafes.API.DTOs.WheelGame;
+
+using Nafes.API.DTOs.FlipCard;
 using Nafes.API.Modules;
 using System.Text.Json;
 
@@ -73,7 +75,16 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.DifficultyLevel, opt => opt.MapFrom(src => src.DifficultyLevel))
             .ForMember(dest => dest.TestType, opt => opt.MapFrom(src => src.TestType ?? TestType.Nafes))
             .ForMember(dest => dest.WrongAnswers, opt => opt.MapFrom(src => SerializeWrongAnswers(src.WrongAnswers)))
+
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+        // FlipCard Mappings
+        CreateMap<FlipCardQuestion, FlipCardQuestionDto>();
+        CreateMap<CreateFlipCardQuestionDto, FlipCardQuestion>();
+        CreateMap<UpdateFlipCardQuestionDto, FlipCardQuestion>();
+        
+        CreateMap<FlipCardPair, FlipCardPairDto>();
+        CreateMap<CreateFlipCardPairDto, FlipCardPair>();
     }
 
     private static string SerializeWrongAnswers(List<string> wrongAnswers)

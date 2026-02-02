@@ -269,6 +269,497 @@ namespace Nafes.API.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("Nafes.API.Modules.DragDropAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AttemptTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlacedInZoneId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsEarned")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PlacedInZoneId");
+
+                    b.HasIndex("SessionId", "ItemId");
+
+                    b.ToTable("DragDropAttempts");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropGameSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CorrectPlacements")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DragDropQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeSpentSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalItems")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WrongPlacements")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DragDropQuestionId");
+
+                    b.HasIndex("StudentId", "IsCompleted");
+
+                    b.ToTable("DragDropGameSessions");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CorrectZoneId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DragDropQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Explanation")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ItemOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CorrectZoneId");
+
+                    b.HasIndex("DragDropQuestionId");
+
+                    b.ToTable("DragDropItems");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DifficultyLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GameTitle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfZones")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsPerCorrectItem")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowImmediateFeedback")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TimeLimit")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UITheme")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Grade", "Subject", "IsActive");
+
+                    b.ToTable("DragDropQuestions");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropZone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("DragDropQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IconUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ZoneOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DragDropQuestionId");
+
+                    b.ToTable("DragDropZones");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AttemptTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("AttemptsBeforeMatch")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Card1FlippedAtMs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Card2FlippedAtMs")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCorrectMatch")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PairId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsEarned")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("FlipCardAttempts");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardGameSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FlipCardQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameMode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HintsUsed")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MatchedPairs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StarRating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeSpentSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMoves")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPairs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WrongAttempts")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlipCardQuestionId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("FlipCardGameSessions");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardPair", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Card1AudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Card1ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Card1Text")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Card1Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Card2AudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Card2ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Card2Text")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Card2Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DifficultyWeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Explanation")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("FlipCardQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PairOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlipCardQuestionId");
+
+                    b.ToTable("FlipCardPairs");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardBackDesign")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomCardBackUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DifficultyLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EnableAudio")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EnableExplanations")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("GameMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GameTitle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaxHints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovePenalty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfPairs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsPerMatch")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowHints")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TimeLimitSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimerMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UITheme")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Grade", "Subject", "IsActive");
+
+                    b.ToTable("FlipCardQuestions");
+                });
+
             modelBuilder.Entity("Nafes.API.Modules.Game", b =>
                 {
                     b.Property<long>("Id")
@@ -370,7 +861,7 @@ namespace Nafes.API.Migrations
                     b.ToTable("GameQuestions");
                 });
 
-            modelBuilder.Entity("Nafes.API.Modules.MatchingGameSession", b =>
+            modelBuilder.Entity("Nafes.API.Modules.MatchingAttempt", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -378,67 +869,43 @@ namespace Nafes.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("CorrectMatches")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("AttemptTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GradeId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("StudentId")
+                    b.Property<long>("PairId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("SubjectId")
+                    b.Property<int>("PointsEarned")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimeSpentSeconds")
+                    b.Property<long>("SessionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TimeToMatchMs")
                         .HasColumnType("int");
-
-                    b.Property<int>("TotalQuestions")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("SessionId");
 
-                    b.ToTable("MatchingGameSessions");
+                    b.ToTable("MatchingAttempts");
                 });
 
-            modelBuilder.Entity("Nafes.API.Modules.MatchingQuestion", b =>
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGame", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -456,12 +923,24 @@ namespace Nafes.API.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<string>("DistractorItems")
+                    b.Property<bool>("EnableAudio")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EnableHints")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("GameTitle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("GradeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -469,17 +948,170 @@ namespace Nafes.API.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LeftItemText")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<int>("MatchingMode")
+                        .HasColumnType("int");
 
-                    b.Property<string>("RightItemText")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<int>("MaxHints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfPairs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsPerMatch")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowConnectingLines")
+                        .HasColumnType("bit");
 
                     b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TimeLimitSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimerMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UITheme")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WrongMatchPenalty")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GradeId", "SubjectId", "IsActive");
+
+                    b.ToTable("MatchingGames");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGamePair", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AnswerAudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("AnswerImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("AnswerText")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("AnswerType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Explanation")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<long>("MatchingGameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PairOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuestionAudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("QuestionImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchingGameId");
+
+                    b.ToTable("MatchingGamePairs");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGameSession", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GradeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HintsUsed")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MatchedPairs")
+                        .HasColumnType("int");
+
+                    b.Property<long>("MatchingGameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("StarRating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeSpentSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMoves")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPairs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalScore")
                         .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
@@ -489,9 +1121,16 @@ namespace Nafes.API.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("WrongAttempts")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("MatchingQuestions");
+                    b.HasIndex("MatchingGameId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("MatchingGameSessions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Parent", b =>
@@ -1290,6 +1929,115 @@ namespace Nafes.API.Migrations
                     b.ToTable("WheelSpinSegments");
                 });
 
+            modelBuilder.Entity("Nafes.API.Modules.DragDropAttempt", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.DragDropItem", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Nafes.API.Modules.DragDropZone", "PlacedInZone")
+                        .WithMany()
+                        .HasForeignKey("PlacedInZoneId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Nafes.API.Modules.DragDropGameSession", "Session")
+                        .WithMany("Attempts")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("PlacedInZone");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropGameSession", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.DragDropQuestion", "DragDropQuestion")
+                        .WithMany()
+                        .HasForeignKey("DragDropQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DragDropQuestion");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropItem", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.DragDropZone", "CorrectZone")
+                        .WithMany()
+                        .HasForeignKey("CorrectZoneId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Nafes.API.Modules.DragDropQuestion", "DragDropQuestion")
+                        .WithMany("Items")
+                        .HasForeignKey("DragDropQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CorrectZone");
+
+                    b.Navigation("DragDropQuestion");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropZone", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.DragDropQuestion", "DragDropQuestion")
+                        .WithMany("Zones")
+                        .HasForeignKey("DragDropQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DragDropQuestion");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardAttempt", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.FlipCardGameSession", "Session")
+                        .WithMany("Attempts")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardGameSession", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.FlipCardQuestion", "FlipCardQuestion")
+                        .WithMany()
+                        .HasForeignKey("FlipCardQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nafes.API.Modules.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FlipCardQuestion");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardPair", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.FlipCardQuestion", "FlipCardQuestion")
+                        .WithMany("Pairs")
+                        .HasForeignKey("FlipCardQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FlipCardQuestion");
+                });
+
             modelBuilder.Entity("Nafes.API.Modules.GameQuestion", b =>
                 {
                     b.HasOne("Nafes.API.Modules.Game", "Game")
@@ -1309,13 +2057,43 @@ namespace Nafes.API.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("Nafes.API.Modules.MatchingAttempt", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.MatchingGameSession", "Session")
+                        .WithMany("Attempts")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGamePair", b =>
+                {
+                    b.HasOne("Nafes.API.Modules.MatchingGame", "MatchingGame")
+                        .WithMany("Pairs")
+                        .HasForeignKey("MatchingGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MatchingGame");
+                });
+
             modelBuilder.Entity("Nafes.API.Modules.MatchingGameSession", b =>
                 {
+                    b.HasOne("Nafes.API.Modules.MatchingGame", "MatchingGame")
+                        .WithMany()
+                        .HasForeignKey("MatchingGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Nafes.API.Modules.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MatchingGame");
 
                     b.Navigation("Student");
                 });
@@ -1428,11 +2206,43 @@ namespace Nafes.API.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Nafes.API.Modules.DragDropGameSession", b =>
+                {
+                    b.Navigation("Attempts");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.DragDropQuestion", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Zones");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardGameSession", b =>
+                {
+                    b.Navigation("Attempts");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.FlipCardQuestion", b =>
+                {
+                    b.Navigation("Pairs");
+                });
+
             modelBuilder.Entity("Nafes.API.Modules.Game", b =>
                 {
                     b.Navigation("GameQuestions");
 
                     b.Navigation("TestResults");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGame", b =>
+                {
+                    b.Navigation("Pairs");
+                });
+
+            modelBuilder.Entity("Nafes.API.Modules.MatchingGameSession", b =>
+                {
+                    b.Navigation("Attempts");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Parent", b =>

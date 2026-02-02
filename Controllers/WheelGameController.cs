@@ -98,4 +98,11 @@ public class WheelGameController : ControllerBase
     {
         return Ok(await _service.GetStudentStatsAsync(studentId));
     }
+
+    [HttpPost("seed")]
+    public async Task<ActionResult> SeedData()
+    {
+        await _service.SeedMockDataAsync();
+        return Ok("Seeded wheel questions successfully");
+    }
 }

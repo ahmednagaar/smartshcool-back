@@ -11,7 +11,7 @@ namespace Nafes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[AllowAnonymous]
 public class StudentController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

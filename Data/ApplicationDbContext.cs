@@ -26,14 +26,30 @@ public class ApplicationDbContext : DbContext
     public DbSet<AnalyticsEvent> AnalyticsEvents { get; set; }
     
     // Matching Game
-    public DbSet<MatchingQuestion> MatchingQuestions { get; set; }
+    public DbSet<MatchingGame> MatchingGames { get; set; }
+    public DbSet<MatchingGamePair> MatchingGamePairs { get; set; }
     public DbSet<MatchingGameSession> MatchingGameSessions { get; set; }
+    public DbSet<MatchingAttempt> MatchingAttempts { get; set; }
 
     // Wheel Game
     public DbSet<WheelQuestion> WheelQuestions { get; set; }
     public DbSet<WheelGameSession> WheelGameSessions { get; set; }
     public DbSet<WheelQuestionAttempt> WheelQuestionAttempts { get; set; }
     public DbSet<WheelSpinSegment> WheelSpinSegments { get; set; }
+
+
+    // Drag & Drop Game
+    public DbSet<DragDropQuestion> DragDropQuestions { get; set; }
+    public DbSet<DragDropZone> DragDropZones { get; set; }
+    public DbSet<DragDropItem> DragDropItems { get; set; }
+    public DbSet<DragDropGameSession> DragDropGameSessions { get; set; }
+    public DbSet<DragDropAttempt> DragDropAttempts { get; set; }
+
+    // Flip Card Game
+    public DbSet<FlipCardQuestion> FlipCardQuestions { get; set; }
+    public DbSet<FlipCardPair> FlipCardPairs { get; set; }
+    public DbSet<FlipCardGameSession> FlipCardGameSessions { get; set; }
+    public DbSet<FlipCardAttempt> FlipCardAttempts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -171,6 +187,42 @@ public class ApplicationDbContext : DbContext
         // ... existing configurations ...
         });
         
+        // Matching Game Configuration
+        modelBuilder.Entity<MatchingGame>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.GradeId, e.SubjectId, e.IsActive });
+            entity.HasMany(e => e.Pairs)
+                .WithOne(p => p.MatchingGame)
+                .HasForeignKey(p => p.MatchingGameId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MatchingGameSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(s => s.Student)
+                .WithMany()
+                .HasForeignKey(s => s.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(s => s.MatchingGame)
+                .WithMany()
+                .HasForeignKey(s => s.MatchingGameId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(s => s.Attempts)
+                .WithOne(a => a.Session)
+                .HasForeignKey(a => a.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MatchingAttempt>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.SessionId);
+        });
+
         // Wheel Game Configuration
         modelBuilder.Entity<WheelQuestion>()
             .HasIndex(q => new { q.GradeId, q.SubjectId, q.IsActive });
@@ -192,5 +244,88 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(a => a.QuestionId)
             .OnDelete(DeleteBehavior.NoAction); // Prevent cycles
+
+        // Drag & Drop Configuration
+        modelBuilder.Entity<DragDropQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Grade, e.Subject, e.IsActive });
+            entity.HasMany(e => e.Zones)
+                .WithOne(z => z.DragDropQuestion)
+                .HasForeignKey(z => z.DragDropQuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(e => e.Items)
+                .WithOne(i => i.DragDropQuestion)
+                .HasForeignKey(i => i.DragDropQuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DragDropItem>(entity =>
+        {
+             entity.HasOne(e => e.CorrectZone)
+                .WithMany()
+                .HasForeignKey(e => e.CorrectZoneId)
+                .OnDelete(DeleteBehavior.NoAction); // Zones are deleted by Question Cascade, avoid multiple cascade paths
+        });
+
+        modelBuilder.Entity<DragDropGameSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.StudentId, e.IsCompleted });
+            entity.HasMany(e => e.Attempts)
+                .WithOne(a => a.Session)
+                .HasForeignKey(a => a.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DragDropAttempt>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.SessionId, e.ItemId });
+            entity.HasOne(e => e.Item)
+                .WithMany()
+                .HasForeignKey(e => e.ItemId)
+                .OnDelete(DeleteBehavior.NoAction); // Prevent cycles
+             entity.HasOne(e => e.PlacedInZone)
+                .WithMany()
+                .HasForeignKey(e => e.PlacedInZoneId)
+                .OnDelete(DeleteBehavior.NoAction); // Prevent cycles
+        });
+
+        // Flip Card Game Configuration
+        modelBuilder.Entity<FlipCardQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.Grade, e.Subject, e.IsActive });
+            entity.HasMany(e => e.Pairs)
+                .WithOne(p => p.FlipCardQuestion)
+                .HasForeignKey(p => p.FlipCardQuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<FlipCardGameSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(s => s.Student)
+                .WithMany()
+                .HasForeignKey(s => s.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(s => s.FlipCardQuestion)
+                .WithMany()
+                .HasForeignKey(s => s.FlipCardQuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(s => s.Attempts)
+                .WithOne(a => a.Session)
+                .HasForeignKey(a => a.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<FlipCardAttempt>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.SessionId);
+        });
     }
 }

@@ -30,7 +30,9 @@ public class WheelQuestionRepository : GenericRepository<WheelQuestion>, IWheelQ
 
     public async Task<IEnumerable<WheelQuestion>> GetRandomQuestionsAsync(GradeLevel grade, SubjectType subject, TestType testType, int count, DifficultyLevel? difficulty = null)
     {
-        var query = _dbSet.Where(q => q.GradeId == grade && q.SubjectId == subject && q.TestType == testType && q.IsActive && !q.IsDeleted);
+        // NOTE: TestType filter removed - all questions for grade/subject are included
+        // This ensures admin-created questions (which may not have TestType set) are always found
+        var query = _dbSet.Where(q => q.GradeId == grade && q.SubjectId == subject && q.IsActive && !q.IsDeleted);
 
         if (difficulty.HasValue)
             query = query.Where(q => q.DifficultyLevel == difficulty.Value);

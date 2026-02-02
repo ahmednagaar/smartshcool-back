@@ -17,6 +17,7 @@ public interface IWheelGameService
     Task<SessionCompleteDto> CompleteSessionAsync(long sessionId);
     Task<IEnumerable<LeaderboardEntryDto>> GetLeaderboardAsync(int gradeId, int subjectId);
     Task<StudentStatisticsDto> GetStudentStatsAsync(long studentId);
+    Task<bool> SeedMockDataAsync(); // Dev helper
 }
 // DTO helper for response
 public class StartGameResponseDto 
@@ -318,5 +319,44 @@ public class WheelGameService : IWheelGameService
     public async Task<StudentStatisticsDto> GetStudentStatsAsync(long studentId)
     {
         return await _sessionRepository.GetStudentStatisticsAsync(studentId);
+    }
+
+    public async Task<bool> SeedMockDataAsync()
+    {
+        var count = await _questionRepository.GetQuestionCountByGradeSubjectAsync(GradeLevel.Grade4, SubjectType.Arabic);
+        if (count > 0) return false;
+
+        var questions = new List<WheelQuestion>
+        {
+            // Grade 4 Arabic
+            new WheelQuestion { QuestionText = "ما عاصمة السعودية؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الرياض", WrongAnswers = "[\"جدة\", \"مكة\", \"الدمام\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy, CategoryTag = "جغرافيا", Explanation = "الرياض هي العاصمة.", IsActive = true, CreatedDate = DateTime.UtcNow },
+            new WheelQuestion { QuestionText = "ما ضد كلمة شجاع؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "جبان", WrongAnswers = "[\"قوي\", \"سريع\", \"ذكي\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Arabic, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow },
+            
+            // Grade 4 Science
+            new WheelQuestion { QuestionText = "حيوان يسمى سفينة الصحراء؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الجمل", WrongAnswers = "[\"الحصان\", \"الفيل\", \"الأسد\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow },
+            new WheelQuestion { QuestionText = "ما هي الحالة الصلبة للماء؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الثلج", WrongAnswers = "[\"البخار\", \"الماء\", \"الضباب\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Science, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow },
+
+            // Grade 4 Math
+             new WheelQuestion { QuestionText = "5 * 5 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "25", WrongAnswers = "[\"20\", \"30\", \"10\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow },
+             new WheelQuestion { QuestionText = "20 / 4 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "5", WrongAnswers = "[\"4\", \"6\", \"8\"]", PointsValue = 10, GradeId = GradeLevel.Grade4, SubjectId = SubjectType.Math, TestType = TestType.Central, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow },
+
+             // Grade 5 Arabic
+             new WheelQuestion { QuestionText = "الفاعل يكون دائماً؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "مرفوعاً", WrongAnswers = "[\"منصوباً\", \"مجروراً\", \"ساكناً\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium, IsActive = true, CreatedDate = DateTime.UtcNow },
+             
+             // Grade 5 Science
+             new WheelQuestion { QuestionText = "عدد كواكب المجموعة الشمسية؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "8", WrongAnswers = "[\"7\", \"9\", \"10\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium, IsActive = true, CreatedDate = DateTime.UtcNow },
+
+             // Grade 5 Math
+             new WheelQuestion { QuestionText = "محيط مربع ضلعه 5سم؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "20", WrongAnswers = "[\"25\", \"15\", \"10\"]", PointsValue = 15, GradeId = GradeLevel.Grade5, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium, IsActive = true, CreatedDate = DateTime.UtcNow },
+
+             // Grade 6
+             new WheelQuestion { QuestionText = "إعراب المبتدأ؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "مرفوع", WrongAnswers = "[\"منصوب\", \"مجرور\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Arabic, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Medium, IsActive = true, CreatedDate = DateTime.UtcNow },
+             new WheelQuestion { QuestionText = "3 أس 2 = ?", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "9", WrongAnswers = "[\"6\", \"3\", \"12\"]", PointsValue = 20, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Math, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Hard, IsActive = true, CreatedDate = DateTime.UtcNow },
+             new WheelQuestion { QuestionText = "الغاز الذي نتنفسه؟", QuestionType = QuestionType.MultipleChoice, CorrectAnswer = "الأكسجين", WrongAnswers = "[\"الهيدروجين\", \"النيتروجين\"]", PointsValue = 15, GradeId = GradeLevel.Grade6, SubjectId = SubjectType.Science, TestType = TestType.Nafes, DifficultyLevel = DifficultyLevel.Easy, IsActive = true, CreatedDate = DateTime.UtcNow }
+
+        };
+
+        await _questionRepository.BulkCreateAsync(questions);
+        return true;
     }
 }

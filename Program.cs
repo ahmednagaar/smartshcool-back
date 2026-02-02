@@ -5,7 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nafes.API.Data;
 using Nafes.API.Repositories;
+using Nafes.API.Repositories.FlipCard;
 using Nafes.API.Services;
+using Nafes.API.Services.FlipCard;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +36,8 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 
 // Matching Game
-builder.Services.AddScoped<IMatchingQuestionRepository, MatchingQuestionRepository>();
+builder.Services.AddScoped<IMatchingGameRepository, MatchingGameRepository>();
 builder.Services.AddScoped<IMatchingGameSessionRepository, MatchingGameSessionRepository>();
-builder.Services.AddScoped<IMatchingQuestionService, MatchingQuestionService>();
 builder.Services.AddScoped<IMatchingGameService, MatchingGameService>();
 
 // Wheel Game
@@ -48,6 +49,21 @@ builder.Services.AddScoped<IWheelQuestionService, WheelQuestionService>();
 builder.Services.AddScoped<IWheelGameService, WheelGameService>();
 builder.Services.AddScoped<IWheelSpinSegmentService, WheelSpinSegmentService>();
 
+// Drag & Drop Game
+builder.Services.AddScoped<IDragDropQuestionRepository, DragDropQuestionRepository>();
+builder.Services.AddScoped<IDragDropGameSessionRepository, DragDropGameSessionRepository>();
+builder.Services.AddScoped<IDragDropAttemptRepository, DragDropAttemptRepository>();
+builder.Services.AddScoped<IUIThemeService, UIThemeService>();
+builder.Services.AddScoped<IDragDropQuestionService, DragDropQuestionService>();
+builder.Services.AddScoped<IDragDropGameService, DragDropGameService>();
+
+// Flip Card Game
+builder.Services.AddScoped<IFlipCardQuestionRepository, FlipCardQuestionRepository>();
+builder.Services.AddScoped<IFlipCardGameSessionRepository, FlipCardGameSessionRepository>();
+builder.Services.AddScoped<IFlipCardAttemptRepository, FlipCardAttemptRepository>();
+builder.Services.AddScoped<IFlipCardQuestionService, FlipCardQuestionService>();
+builder.Services.AddScoped<IFlipCardGameService, FlipCardGameService>();
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
@@ -56,7 +72,7 @@ builder.Services.AddScoped<ISanitizationService, SanitizationService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 // Configure MailSettings
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<Nafes.API.Services.MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 // Register Hosted Services
 // builder.Services.AddHostedService<DailyReportBackgroundService>();
@@ -160,7 +176,15 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
+    try
+    {
+        DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Warning: Database seeding failed: {ex.Message}");
+        // Continue running the app even if seeding fails
+    }
 }
 
 app.Run();

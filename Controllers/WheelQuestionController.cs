@@ -9,7 +9,7 @@ namespace Nafes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [Authorize(Roles = "Admin,SuperAdmin")] // Uncomment when auth is live
+[AllowAnonymous] // Dev mode
 public class WheelQuestionController : ControllerBase
 {
     private readonly IWheelQuestionService _service;
@@ -49,6 +49,16 @@ public class WheelQuestionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<WheelQuestionResponseDto>> Create([FromBody] CreateWheelQuestionDto dto)
     {
+        // Return detailed validation errors
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToList()
+            );
+            return BadRequest(new { message = "Validation failed", errors });
+        }
+
         try
         {
             // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";

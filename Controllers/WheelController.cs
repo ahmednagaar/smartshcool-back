@@ -9,7 +9,7 @@ namespace Nafes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[AllowAnonymous]
 public class WheelController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
