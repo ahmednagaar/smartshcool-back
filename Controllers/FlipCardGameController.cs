@@ -12,7 +12,7 @@ namespace Nafes.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Student")]
+    [AllowAnonymous]  // Allow guest play - students can play with or without account
     public class FlipCardGameController : ControllerBase
     {
         private readonly IFlipCardGameService _service;

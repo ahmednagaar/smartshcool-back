@@ -100,10 +100,14 @@ namespace Nafes.API.Controllers
             return NoContent();
         }
 
-        // [HttpGet]
-        // [Authorize(Roles = "Admin,SuperAdmin")]
-        // public async Task<IActionResult> GetAllPaginated([FromQuery] PaginationParams params) // PaginationParams not fully known
-        // { ... }
+        [HttpGet("paginated")]
+        [Authorize(Roles = "Admin,SuperAdmin")]
+        public async Task<IActionResult> GetAllPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 50, [FromQuery] string? searchTerm = null)
+        {
+            var result = await _service.GetAllPaginatedAsync(pageNumber, pageSize);
+            return Ok(result);
+        }
+
 
         [HttpGet("count")]
         [AllowAnonymous]

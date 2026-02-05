@@ -17,7 +17,7 @@ public class UIThemeService : IUIThemeService
             BackgroundPattern = "bg-dots", 
             Font = "Inter",
             Description = "Clean and professional design suitable for all grades.",
-            PreviewImageUrl = "/assets/themes/modern-preview.png"
+            PreviewImageUrl = ""
         },
         new UITheme 
         { 
@@ -28,7 +28,7 @@ public class UIThemeService : IUIThemeService
             BackgroundPattern = "bg-leaves", 
             Font = "Comic Neue",
             Description = "Fun and organic theme with nature elements.",
-            PreviewImageUrl = "/assets/themes/nature-preview.png"
+            PreviewImageUrl = ""
         },
         new UITheme 
         { 
@@ -39,7 +39,7 @@ public class UIThemeService : IUIThemeService
             BackgroundPattern = "bg-waves", 
             Font = "Quicksand",
             Description = "Calming blue tones with aquatic vibes.",
-            PreviewImageUrl = "/assets/themes/ocean-preview.png"
+            PreviewImageUrl = ""
         },
         new UITheme 
         { 
@@ -50,7 +50,7 @@ public class UIThemeService : IUIThemeService
             BackgroundPattern = "bg-sun", 
             Font = "Dosis",
             Description = "Energetic warm colors for engagement.",
-            PreviewImageUrl = "/assets/themes/sunset-preview.png"
+            PreviewImageUrl = ""
         }
     };
 

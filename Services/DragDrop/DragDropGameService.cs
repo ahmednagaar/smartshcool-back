@@ -30,31 +30,49 @@ public class DragDropGameService : IDragDropGameService
 
     public async Task<GameSessionDto> StartSessionAsync(StartGameRequestDto request, int studentId)
     {
-        // 1. Check if active session exists?
+        // 1. Check if active session exists
         var activeSession = await _sessionRepository.GetActiveSessionAsync(studentId);
         if (activeSession != null)
         {
-            // If exists, resume it? Or close and start new?
-            // For now, let's just complete the old one or return it.
-            // Let's return the active one if it matches the requested QuestionId, else complete it.
-            if (activeSession.DragDropQuestionId == request.QuestionId)
+            // If exists and matches requested QuestionId, resume it
+            if (request.QuestionId.HasValue && activeSession.DragDropQuestionId == request.QuestionId.Value)
             {
                return await MapToGameSessionDto(activeSession);
             }
             else
             {
+                // Complete the old session and start fresh
                 await _sessionRepository.CompleteSessionAsync(activeSession.Id);
             }
         }
 
-        // 2. Create new session
-        var question = await _questionRepository.GetByIdAsync(request.QuestionId, includeZonesAndItems: true);
-        if (question == null) throw new KeyNotFoundException("Question not found");
+        // 2. Get question - either by ID or random by grade/subject
+        DragDropQuestion? question;
+        
+        if (request.QuestionId.HasValue)
+        {
+            // Specific question requested
+            question = await _questionRepository.GetByIdAsync(request.QuestionId.Value, includeZonesAndItems: true);
+            if (question == null) 
+                throw new KeyNotFoundException($"Question with ID {request.QuestionId.Value} not found");
+        }
+        else
+        {
+            // Get random question by grade and subject
+            question = await _questionRepository.GetRandomQuestionAsync(
+                request.Grade, 
+                request.Subject, 
+                request.Difficulty
+            );
+            if (question == null) 
+                throw new KeyNotFoundException($"No questions found for Grade {request.Grade} and Subject {request.Subject}");
+        }
 
+        // 3. Create new session
         var newSession = new DragDropGameSession
         {
             StudentId = studentId,
-            DragDropQuestionId = request.QuestionId,
+            DragDropQuestionId = question.Id,  // Use resolved question ID
             Grade = request.Grade,
             Subject = request.Subject,
             StartTime = DateTime.UtcNow,
@@ -65,10 +83,10 @@ public class DragDropGameService : IDragDropGameService
 
         var createdSession = await _sessionRepository.CreateSessionAsync(newSession);
 
-        // Need to reload with navigation properties to map DTO fully? 
-        // Or just map manually using 'question' variable.
+        // Map to DTO using the question we already loaded
         return await MapToGameSessionDto(createdSession, question);
     }
+
 
     public async Task<SubmitAttemptResponseDto> ProcessAttemptAsync(SubmitAttemptRequestDto request)
     {

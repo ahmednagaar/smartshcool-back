@@ -6,9 +6,10 @@ namespace Nafes.API.DTOs.DragDrop;
 
 public class StartGameRequestDto
 {
-    public int QuestionId { get; set; }
+    public int? QuestionId { get; set; }  // Optional - if null, get random by grade/subject
     public GradeLevel Grade { get; set; }
     public SubjectType Subject { get; set; }
+    public DifficultyLevel? Difficulty { get; set; }  // Optional filter
 }
 
 public class GameSessionDto
