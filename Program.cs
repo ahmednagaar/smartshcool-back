@@ -101,16 +101,22 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Add CORS
+// Add CORS - Production safe configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("NafesPolicy", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://smartshcool-front.vercel.app"  // Production frontend (Vercel)
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
+
+// IIS configuration is handled automatically by the SDK
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -155,37 +161,43 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-// Enable Swagger in all environments for testing
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// Swagger only enabled in Development mode for security
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nafes API v1");
-    c.RoutePrefix = "swagger"; // Set Swagger UI at /swagger
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nafes API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
 
-app.UseHttpsRedirection();
+// HTTPS redirect disabled for Somee free hosting compatibility
+// app.UseHttpsRedirection();
 
-app.UseCors("NafesPolicy");
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Seed database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    try
-    {
-        DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Warning: Database seeding failed: {ex.Message}");
-        // Continue running the app even if seeding fails
-    }
-}
+// Database seeding disabled for production - run migrations manually
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//     try
+//     {
+//         DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"Warning: Database seeding failed: {ex.Message}");
+//     }
+// }
+
+// Health check endpoint for testing
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
 app.Run();
 
