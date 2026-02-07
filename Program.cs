@@ -182,19 +182,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Database seeding disabled for production - run migrations manually
-// using (var scope = app.Services.CreateScope())
-// {
-//     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     try
-//     {
-//         DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
-//     }
-//     catch (Exception ex)
-//     {
-//         Console.WriteLine($"Warning: Database seeding failed: {ex.Message}");
-//     }
-// }
+// Seed database (creates admin user if not exists)
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        DbSeeder.SeedAsync(context).GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Warning: Database seeding failed: {ex.Message}");
+        // Continue running the app even if seeding fails
+    }
+}
 
 // Health check endpoint for testing
 app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
