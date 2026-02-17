@@ -7,7 +7,7 @@ namespace Nafes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [Authorize] // Uncomment when auth is live
+[AllowAnonymous] // Student game endpoints — all anonymous (no login required)
 public class WheelGameController : ControllerBase
 {
     private readonly IWheelGameService _service;
@@ -38,7 +38,11 @@ public class WheelGameController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "StartGame Error: Unhandled exception");
-            return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace });
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "حدث خطأ في الخادم، يرجى المحاولة مرة أخرى"
+            });
         }
     }
 
@@ -99,6 +103,7 @@ public class WheelGameController : ControllerBase
         return Ok(await _service.GetStudentStatsAsync(studentId));
     }
 
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost("seed")]
     public async Task<ActionResult> SeedData()
     {

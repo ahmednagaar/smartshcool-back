@@ -139,11 +139,11 @@ namespace Nafes.API.Controllers
         }
 
         [HttpPost("complete")]
-        public async Task<IActionResult> CompleteSession(int sessionId)
+        public async Task<IActionResult> CompleteSession([FromBody] CompleteSessionRequest request)
         {
             try
             {
-                var result = await _service.CompleteSessionAsync(sessionId);
+                var result = await _service.CompleteSessionAsync(request.SessionId);
                 return Ok(result);
             }
             catch (Exception)
@@ -151,5 +151,10 @@ namespace Nafes.API.Controllers
                 return NotFound();
             }
         }
+    }
+
+    public class CompleteSessionRequest
+    {
+        public int SessionId { get; set; }
     }
 }

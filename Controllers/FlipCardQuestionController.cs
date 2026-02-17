@@ -24,7 +24,7 @@ namespace Nafes.API.Controllers
         }
 
         [HttpGet("grade/{gradeId}/subject/{subjectId}")]
-        [Authorize(Roles = "Student,Admin,SuperAdmin")]
+        [AllowAnonymous] // Students play without accounts
         public async Task<IActionResult> GetByGradeAndSubject(int gradeId, int subjectId)
         {
             var questions = await _service.GetByGradeAndSubjectAsync(gradeId, subjectId);
@@ -104,7 +104,7 @@ namespace Nafes.API.Controllers
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> GetAllPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 50, [FromQuery] string? searchTerm = null)
         {
-            var result = await _service.GetAllPaginatedAsync(pageNumber, pageSize);
+            var result = await _service.GetAllPaginatedAsync(pageNumber, pageSize, searchTerm);
             return Ok(result);
         }
 

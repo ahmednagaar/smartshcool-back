@@ -136,9 +136,9 @@ namespace Nafes.API.Services.FlipCard
             return await _repository.DeleteAsync(id);
         }
 
-        public async Task<object> GetAllPaginatedAsync(int page, int pageSize)
+        public async Task<object> GetAllPaginatedAsync(int page, int pageSize, string? searchTerm = null)
         {
-            var items = await _repository.GetAllPaginatedAsync(page, pageSize);
+            var items = await _repository.GetAllPaginatedAsync(page, pageSize, searchTerm);
             // Need total count for real pagination metadata
             return new { items }; 
         }

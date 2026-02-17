@@ -13,7 +13,7 @@ namespace Nafes.API.Services.FlipCard
         Task<IEnumerable<FlipCardQuestion>> GetByGradeAndSubjectAsync(int gradeId, int subjectId);
         Task<FlipCardQuestion?> GetByIdAsync(int id, bool includePairs = false);
         Task<bool> DeleteAsync(int id);
-        Task<object> GetAllPaginatedAsync(int page, int pageSize); // Simplified return type
+        Task<object> GetAllPaginatedAsync(int page, int pageSize, string? searchTerm = null);
         Task<int> GetQuestionCountAsync(int gradeId, int subjectId);
         Task<IEnumerable<string>> GetCategoriesAsync(int? gradeId = null, int? subjectId = null);
         Task<FlipCardQuestion?> GetRandomQuestionAsync(int gradeId, int subjectId, int? difficultyLevel = null);

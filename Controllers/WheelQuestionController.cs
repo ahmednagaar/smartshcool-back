@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nafes.API.DTOs.Shared;
@@ -9,16 +10,31 @@ namespace Nafes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[AllowAnonymous] // Dev mode
 public class WheelQuestionController : ControllerBase
 {
     private readonly IWheelQuestionService _service;
+    private readonly ILogger<WheelQuestionController> _logger;
 
-    public WheelQuestionController(IWheelQuestionService service)
+    public WheelQuestionController(IWheelQuestionService service, ILogger<WheelQuestionController> logger)
     {
         _service = service;
+        _logger = logger;
     }
 
+    /// <summary>
+    /// Helper to get the admin username from JWT claims.
+    /// </summary>
+    private string GetAdminUsername()
+    {
+        return User?.FindFirst(ClaimTypes.Name)?.Value
+            ?? User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User?.FindFirst("username")?.Value
+            ?? "admin";
+    }
+
+    // ✅ READ endpoints — open to everyone (students need to load questions)
+
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<WheelQuestionResponseDto>>> GetAll(
         [FromQuery] int page = 1,
@@ -33,6 +49,7 @@ public class WheelQuestionController : ControllerBase
         return PaginatedResponse<WheelQuestionResponseDto>.Ok(items, page, pageSize, totalCount);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<WheelQuestionResponseDto>> GetById(long id)
     {
@@ -46,10 +63,21 @@ public class WheelQuestionController : ControllerBase
         }
     }
 
+    [AllowAnonymous]
+    [HttpGet("categories")]
+    public async Task<ActionResult<IEnumerable<string>>> GetCategories(
+        [FromQuery] GradeLevel? grade = null, 
+        [FromQuery] SubjectType? subject = null)
+    {
+        return Ok(await _service.GetCategoriesAsync(grade, subject));
+    }
+
+    // 🔒 WRITE endpoints — admin only
+
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost]
     public async Task<ActionResult<WheelQuestionResponseDto>> Create([FromBody] CreateWheelQuestionDto dto)
     {
-        // Return detailed validation errors
         if (!ModelState.IsValid)
         {
             var errors = ModelState.ToDictionary(
@@ -61,24 +89,28 @@ public class WheelQuestionController : ControllerBase
 
         try
         {
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";
-            var userId = "system"; // Temp
+            var userId = GetAdminUsername();
             var result = await _service.CreateAsync(dto, userId);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace, inner = ex.InnerException?.Message });
+            _logger.LogError(ex, "Error creating wheel question");
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "حدث خطأ في الخادم، يرجى المحاولة مرة أخرى"
+            });
         }
     }
 
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<WheelQuestionResponseDto>> Update(long id, [FromBody] UpdateWheelQuestionDto dto)
     {
         try
         {
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";
-            var userId = "system"; // Temp
+            var userId = GetAdminUsername();
             return Ok(await _service.UpdateAsync(id, dto, userId));
         }
         catch (KeyNotFoundException)
@@ -87,13 +119,13 @@ public class WheelQuestionController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(long id)
     {
         try
         {
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "system";
-            var userId = "system";
+            var userId = GetAdminUsername();
             await _service.DeleteAsync(id, userId);
             return NoContent();
         }
@@ -103,19 +135,12 @@ public class WheelQuestionController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost("bulk-import")]
     public async Task<ActionResult> BulkImport([FromBody] List<CreateWheelQuestionDto> dtos)
     {
-        var userId = "system";
+        var userId = GetAdminUsername();
         await _service.BulkImportAsync(dtos, userId);
         return Ok(new { message = $"Imported {dtos.Count} questions successfully" });
-    }
-
-    [HttpGet("categories")]
-    public async Task<ActionResult<IEnumerable<string>>> GetCategories(
-        [FromQuery] GradeLevel? grade = null, 
-        [FromQuery] SubjectType? subject = null)
-    {
-        return Ok(await _service.GetCategoriesAsync(grade, subject));
     }
 }
