@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nafes.API.Data;
 
@@ -11,9 +12,11 @@ using Nafes.API.Data;
 namespace Nafes.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260217042458_AddPassageQuestions")]
+    partial class AddPassageQuestions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,7 +80,7 @@ namespace Nafes.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Achievements", (string)null);
+                    b.ToTable("Achievements");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Admin", b =>
@@ -149,7 +152,7 @@ namespace Nafes.API.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.AnalyticsEvent", b =>
@@ -202,7 +205,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("EventName");
 
-                    b.ToTable("AnalyticsEvents", (string)null);
+                    b.ToTable("AnalyticsEvents");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.AuditLog", b =>
@@ -266,7 +269,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("CreatedDate");
 
-                    b.ToTable("AuditLogs", (string)null);
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropAttempt", b =>
@@ -303,7 +306,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("SessionId", "ItemId");
 
-                    b.ToTable("DragDropAttempts", (string)null);
+                    b.ToTable("DragDropAttempts");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropGameSession", b =>
@@ -356,7 +359,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId", "IsCompleted");
 
-                    b.ToTable("DragDropGameSessions", (string)null);
+                    b.ToTable("DragDropGameSessions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropItem", b =>
@@ -399,7 +402,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("DragDropQuestionId");
 
-                    b.ToTable("DragDropItems", (string)null);
+                    b.ToTable("DragDropItems");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropQuestion", b =>
@@ -464,7 +467,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("Grade", "Subject", "IsActive");
 
-                    b.ToTable("DragDropQuestions", (string)null);
+                    b.ToTable("DragDropQuestions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropZone", b =>
@@ -499,7 +502,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("DragDropQuestionId");
 
-                    b.ToTable("DragDropZones", (string)null);
+                    b.ToTable("DragDropZones");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.FlipCardAttempt", b =>
@@ -538,7 +541,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("FlipCardAttempts", (string)null);
+                    b.ToTable("FlipCardAttempts");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.FlipCardGameSession", b =>
@@ -603,7 +606,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("FlipCardGameSessions", (string)null);
+                    b.ToTable("FlipCardGameSessions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.FlipCardPair", b =>
@@ -661,7 +664,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("FlipCardQuestionId");
 
-                    b.ToTable("FlipCardPairs", (string)null);
+                    b.ToTable("FlipCardPairs");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.FlipCardQuestion", b =>
@@ -757,7 +760,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("Grade", "Subject", "IsActive");
 
-                    b.ToTable("FlipCardQuestions", (string)null);
+                    b.ToTable("FlipCardQuestions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Game", b =>
@@ -812,7 +815,7 @@ namespace Nafes.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games", (string)null);
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.GameQuestion", b =>
@@ -858,7 +861,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("GameQuestions", (string)null);
+                    b.ToTable("GameQuestions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.MatchingAttempt", b =>
@@ -891,7 +894,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("MatchingAttempts", (string)null);
+                    b.ToTable("MatchingAttempts");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.MatchingGame", b =>
@@ -991,7 +994,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("GradeId", "SubjectId", "IsActive");
 
-                    b.ToTable("MatchingGames", (string)null);
+                    b.ToTable("MatchingGames");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.MatchingGamePair", b =>
@@ -1048,7 +1051,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("MatchingGameId");
 
-                    b.ToTable("MatchingGamePairs", (string)null);
+                    b.ToTable("MatchingGamePairs");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.MatchingGameSession", b =>
@@ -1130,7 +1133,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("MatchingGameSessions", (string)null);
+                    b.ToTable("MatchingGameSessions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Parent", b =>
@@ -1179,7 +1182,7 @@ namespace Nafes.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parents", (string)null);
+                    b.ToTable("Parents");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Question", b =>
@@ -1247,7 +1250,7 @@ namespace Nafes.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.RefreshToken", b =>
@@ -1298,7 +1301,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Student", b =>
@@ -1374,7 +1377,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.StudentAchievement", b =>
@@ -1420,7 +1423,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentAchievements", (string)null);
+                    b.ToTable("StudentAchievements");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.SubQuestion", b =>
@@ -1479,7 +1482,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("SubQuestions", (string)null);
+                    b.ToTable("SubQuestions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.SystemSetting", b =>
@@ -1536,7 +1539,7 @@ namespace Nafes.API.Migrations
                     b.HasIndex("Key")
                         .IsUnique();
 
-                    b.ToTable("SystemSettings", (string)null);
+                    b.ToTable("SystemSettings");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.TestResult", b =>
@@ -1595,7 +1598,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("TestResults", (string)null);
+                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.Visit", b =>
@@ -1651,7 +1654,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("VisitorId");
 
-                    b.ToTable("Visits", (string)null);
+                    b.ToTable("Visits");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.WheelGameResult", b =>
@@ -1704,7 +1707,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("WheelGameResults", (string)null);
+                    b.ToTable("WheelGameResults");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.WheelGameSession", b =>
@@ -1782,7 +1785,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("WheelGameSessions", (string)null);
+                    b.ToTable("WheelGameSessions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.WheelQuestion", b =>
@@ -1869,7 +1872,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("GradeId", "SubjectId", "IsActive");
 
-                    b.ToTable("WheelQuestions", (string)null);
+                    b.ToTable("WheelQuestions");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.WheelQuestionAttempt", b =>
@@ -1937,7 +1940,7 @@ namespace Nafes.API.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("WheelQuestionAttempts", (string)null);
+                    b.ToTable("WheelQuestionAttempts");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.WheelSpinSegment", b =>
@@ -1992,7 +1995,7 @@ namespace Nafes.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WheelSpinSegments", (string)null);
+                    b.ToTable("WheelSpinSegments");
                 });
 
             modelBuilder.Entity("Nafes.API.Modules.DragDropAttempt", b =>

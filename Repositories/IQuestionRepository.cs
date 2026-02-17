@@ -11,5 +11,6 @@ public interface IQuestionRepository : IGenericRepository<Question>
     Task<(IEnumerable<Question> Items, int TotalCount)> SearchAsync(QuestionSearchRequestDto searchDto);
     Task<IEnumerable<Question>> GetAvailableForGameAsync(long gameId, GradeLevel grade, SubjectType subject, string? searchTerm = null);
     Task<Question?> GetIncludeDeletedAsync(long id);
+    Task<Question?> GetByIdWithSubQuestionsAsync(long id);
 }
 

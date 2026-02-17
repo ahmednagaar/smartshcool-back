@@ -8,6 +8,7 @@ public interface ISanitizationService
 {
     string Sanitize(string input);
     string SanitizeHtml(string input);
+    string SanitizePassageHtml(string input);
     bool IsValidMediaUrl(string url);
     bool IsValidJsonArray(string json);
 }
@@ -15,6 +16,7 @@ public interface ISanitizationService
 public class SanitizationService : ISanitizationService
 {
     private readonly HtmlSanitizer _sanitizer;
+    private readonly HtmlSanitizer _passageSanitizer;
 
     public SanitizationService()
     {
@@ -24,6 +26,17 @@ public class SanitizationService : ISanitizationService
         _sanitizer.AllowedAttributes.Clear();
         _sanitizer.AllowedCssProperties.Clear();
         _sanitizer.AllowedSchemes.Clear();
+        
+        // Permissive sanitizer for passage rich text
+        _passageSanitizer = new HtmlSanitizer();
+        _passageSanitizer.AllowedTags.Clear();
+        foreach (var tag in new[] { "b", "i", "u", "strong", "em", "p", "br", "ul", "ol", "li", "h1", "h2", "h3", "h4", "a", "img", "span", "div", "table", "tr", "td", "th", "thead", "tbody" })
+            _passageSanitizer.AllowedTags.Add(tag);
+        _passageSanitizer.AllowedAttributes.Clear();
+        foreach (var attr in new[] { "href", "src", "alt", "class", "style", "target", "dir" })
+            _passageSanitizer.AllowedAttributes.Add(attr);
+        _passageSanitizer.AllowedSchemes.Add("https");
+        _passageSanitizer.AllowedSchemes.Add("http");
     }
 
     /// <summary>
@@ -43,12 +56,20 @@ public class SanitizationService : ISanitizationService
     }
 
     /// <summary>
-    /// Sanitize HTML content - checking for dangerous scripts but allowing safe HTML if we wanted to (currently configured to strip all)
+    /// Sanitize HTML content - strip all tags
     /// </summary>
     public string SanitizeHtml(string input)
     {
-        // Reusing the robust sanitizer
         return Sanitize(input);
+    }
+
+    /// <summary>
+    /// Sanitize passage HTML - allow safe formatting tags, strip scripts
+    /// </summary>
+    public string SanitizePassageHtml(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return string.Empty;
+        return _passageSanitizer.Sanitize(input).Trim();
     }
 
     public bool IsValidMediaUrl(string url)

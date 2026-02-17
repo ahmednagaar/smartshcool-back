@@ -1,8 +1,11 @@
 using AutoMapper;
+using Nafes.API.Data;
 using Nafes.API.DTOs.Question;
 using Nafes.API.DTOs.Shared;
 using Nafes.API.Modules;
 using Nafes.API.Repositories;
+using Nafes.API.Validation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Nafes.API.Services;
 
@@ -12,17 +15,20 @@ public class QuestionService : IQuestionService
     private readonly IMapper _mapper;
     private readonly ISanitizationService _sanitizer;
     private readonly ILogger<QuestionService> _logger;
+    private readonly ApplicationDbContext _context;
 
     public QuestionService(
         IQuestionRepository questionRepository,
         IMapper mapper,
         ISanitizationService sanitizer,
-        ILogger<QuestionService> logger)
+        ILogger<QuestionService> logger,
+        ApplicationDbContext context)
     {
         _questionRepository = questionRepository;
         _mapper = mapper;
         _sanitizer = sanitizer;
         _logger = logger;
+        _context = context;
     }
 
     public async Task<PaginatedResponse<QuestionGetDto>> GetQuestionsAsync(QuestionSearchRequestDto request)
@@ -52,7 +58,7 @@ public class QuestionService : IQuestionService
 
     public async Task<ApiResponse<QuestionGetDto>> GetQuestionByIdAsync(long id)
     {
-        var question = await _questionRepository.GetByIdAsync(id);
+        var question = await _questionRepository.GetByIdWithSubQuestionsAsync(id);
         if (question == null)
         {
             return ApiResponse<QuestionGetDto>.Error("السؤال غير موجود");
@@ -65,6 +71,13 @@ public class QuestionService : IQuestionService
     {
         try
         {
+            // Validate passage questions
+            var validationErrors = PassageQuestionValidation.ValidateQuestionCreate(createDto);
+            if (validationErrors.Count > 0)
+            {
+                return ApiResponse<QuestionGetDto>.Error(string.Join("، ", validationErrors));
+            }
+
             // Sanitize input
             createDto.Text = _sanitizer.Sanitize(createDto.Text);
             
@@ -72,14 +85,43 @@ public class QuestionService : IQuestionService
             {
                 return ApiResponse<QuestionGetDto>.Error("رابط الوسائط غير صالح");
             }
+            
+            // Sanitize passage text (allow rich HTML)
+            if (!string.IsNullOrEmpty(createDto.PassageText))
+            {
+                createDto.PassageText = _sanitizer.SanitizePassageHtml(createDto.PassageText);
+            }
 
             var question = _mapper.Map<Question>(createDto);
             question.CreatedDate = DateTime.UtcNow;
             
+            // For passage questions, set Options and CorrectAnswer to null
+            if (createDto.Type == QuestionType.Passage)
+            {
+                question.Options = null;
+                question.CorrectAnswer = null;
+            }
+            
             await _questionRepository.AddAsync(question);
             await _questionRepository.SaveChangesAsync();
-
-            var resultDto = _mapper.Map<QuestionGetDto>(question);
+            
+            // Create sub-questions for passage type
+            if (createDto.Type == QuestionType.Passage && createDto.SubQuestions != null)
+            {
+                foreach (var sqDto in createDto.SubQuestions)
+                {
+                    var subQuestion = _mapper.Map<SubQuestion>(sqDto);
+                    subQuestion.QuestionId = question.Id;
+                    subQuestion.Text = _sanitizer.Sanitize(sqDto.Text);
+                    subQuestion.CreatedDate = DateTime.UtcNow;
+                    _context.SubQuestions.Add(subQuestion);
+                }
+                await _context.SaveChangesAsync();
+            }
+            
+            // Reload with sub-questions
+            var savedQuestion = await _questionRepository.GetByIdWithSubQuestionsAsync(question.Id);
+            var resultDto = _mapper.Map<QuestionGetDto>(savedQuestion);
             return ApiResponse<QuestionGetDto>.Ok(resultDto, "تم إضافة السؤال بنجاح");
         }
         catch (Exception ex)
@@ -93,7 +135,7 @@ public class QuestionService : IQuestionService
     {
         try
         {
-            var question = await _questionRepository.GetByIdAsync(id);
+            var question = await _questionRepository.GetByIdWithSubQuestionsAsync(id);
             if (question == null)
             {
                 return ApiResponse<QuestionGetDto>.Error("السؤال غير موجود");
@@ -109,12 +151,42 @@ public class QuestionService : IQuestionService
             {
                 return ApiResponse<QuestionGetDto>.Error("رابط الوسائط غير صالح");
             }
+            
+            // Sanitize passage text
+            if (!string.IsNullOrEmpty(updateDto.PassageText))
+            {
+                updateDto.PassageText = _sanitizer.SanitizePassageHtml(updateDto.PassageText);
+            }
 
             _mapper.Map(updateDto, question);
+            
+            // Handle sub-questions for passage type
+            if (updateDto.Type == QuestionType.Passage && updateDto.SubQuestions != null)
+            {
+                // Remove existing sub-questions
+                var existingSubQuestions = _context.SubQuestions.Where(sq => sq.QuestionId == id);
+                _context.SubQuestions.RemoveRange(existingSubQuestions);
+                
+                // Add new sub-questions
+                foreach (var sqDto in updateDto.SubQuestions)
+                {
+                    var subQuestion = _mapper.Map<SubQuestion>(sqDto);
+                    subQuestion.QuestionId = id;
+                    subQuestion.Text = _sanitizer.Sanitize(sqDto.Text);
+                    subQuestion.CreatedDate = DateTime.UtcNow;
+                    _context.SubQuestions.Add(subQuestion);
+                }
+                
+                question.Options = null;
+                question.CorrectAnswer = null;
+            }
+            
             _questionRepository.Update(question);
             await _questionRepository.SaveChangesAsync();
-
-            return ApiResponse<QuestionGetDto>.Ok(_mapper.Map<QuestionGetDto>(question), "تم تحديث السؤال بنجاح");
+            
+            // Reload with sub-questions
+            var updated = await _questionRepository.GetByIdWithSubQuestionsAsync(id);
+            return ApiResponse<QuestionGetDto>.Ok(_mapper.Map<QuestionGetDto>(updated), "تم تحديث السؤال بنجاح");
         }
         catch (Exception ex)
         {

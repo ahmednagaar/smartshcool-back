@@ -51,6 +51,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<FlipCardGameSession> FlipCardGameSessions { get; set; }
     public DbSet<FlipCardAttempt> FlipCardAttempts { get; set; }
 
+    // Passage Questions
+    public DbSet<SubQuestion> SubQuestions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -71,6 +74,25 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Text).IsRequired();
             entity.Property(e => e.Type).IsRequired();
             entity.Property(e => e.Difficulty).IsRequired();
+            entity.Property(e => e.PassageText).HasMaxLength(50000).IsRequired(false);
+            entity.Property(e => e.EstimatedTimeMinutes).IsRequired(false);
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+
+        // SubQuestion configuration
+        modelBuilder.Entity<SubQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Text).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Options).IsRequired();
+            entity.Property(e => e.CorrectAnswer).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Explanation).HasMaxLength(2000);
+            entity.Property(e => e.OrderIndex).IsRequired();
+            entity.HasOne(sq => sq.Question)
+                  .WithMany(q => q.SubQuestions)
+                  .HasForeignKey(sq => sq.QuestionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(sq => sq.QuestionId);
             entity.HasQueryFilter(e => !e.IsDeleted);
         });
 

@@ -16,6 +16,12 @@ public class QuestionGetDto
     public SubjectType Subject { get; set; }
     public TestType TestType { get; set; }
     public string? MediaUrl { get; set; }
+    
+    // Passage fields
+    public string? PassageText { get; set; }
+    public int? EstimatedTimeMinutes { get; set; }
+    public List<SubQuestionGetDto>? SubQuestions { get; set; }
+    
     public string? Options { get; set; }
     public string? CorrectAnswer { get; set; }
     public DateTime CreatedDate { get; set; }
@@ -23,10 +29,21 @@ public class QuestionGetDto
     public List<string>? Tags { get; set; }
 }
 
+public class SubQuestionGetDto
+{
+    public long Id { get; set; }
+    public long QuestionId { get; set; }
+    public int OrderIndex { get; set; }
+    public string Text { get; set; } = string.Empty;
+    public string Options { get; set; } = string.Empty;
+    public string CorrectAnswer { get; set; } = string.Empty;
+    public string? Explanation { get; set; }
+}
+
 public class QuestionCreateDto
 {
     [Required(ErrorMessage = "نص السؤال مطلوب")]
-    [StringLength(500, MinimumLength = 10, ErrorMessage = "يجب أن يكون السؤال بين 10 و 500 حرف")]
+    [StringLength(500, MinimumLength = 5, ErrorMessage = "يجب أن يكون السؤال بين 5 و 500 حرف")]
     public string Text { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "نوع السؤال مطلوب")]
@@ -50,13 +67,22 @@ public class QuestionCreateDto
 
     [StringLength(2048)]
     public string? MediaUrl { get; set; }
+    
+    // Passage fields
+    [StringLength(50000, ErrorMessage = "نص القطعة يجب أن لا يتجاوز 50000 حرف")]
+    public string? PassageText { get; set; }
+    
+    [Range(1, 120, ErrorMessage = "الوقت المقدر يجب أن يكون بين 1 و 120 دقيقة")]
+    public int? EstimatedTimeMinutes { get; set; }
+    
+    public List<SubQuestionCreateDto>? SubQuestions { get; set; }
 
+    // Normal question fields (not used for Passage type)
     [ValidateJsonArray(minCount: 0, maxCount: 10, ErrorMessage = "الخيارات غير صالحة")]
     public string? Options { get; set; }
 
-    [Required(ErrorMessage = "الإجابة الصحيحة مطلوبة")]
     [StringLength(500)]
-    public string CorrectAnswer { get; set; } = string.Empty;
+    public string? CorrectAnswer { get; set; }
     
     [StringLength(1000)]
     public string? AdminNotes { get; set; }
@@ -64,9 +90,30 @@ public class QuestionCreateDto
     public List<string>? Tags { get; set; }
 }
 
+public class SubQuestionCreateDto
+{
+    [Required]
+    [Range(1, 20)]
+    public int OrderIndex { get; set; }
+    
+    [Required(ErrorMessage = "نص السؤال الفرعي مطلوب")]
+    [StringLength(1000, MinimumLength = 5, ErrorMessage = "نص السؤال الفرعي يجب أن يكون بين 5 و 1000 حرف")]
+    public string Text { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "خيارات الإجابة مطلوبة")]
+    public string Options { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "الإجابة الصحيحة مطلوبة")]
+    [StringLength(500)]
+    public string CorrectAnswer { get; set; } = string.Empty;
+    
+    [StringLength(2000)]
+    public string? Explanation { get; set; }
+}
+
 public class QuestionUpdateDto
 {
-    [StringLength(500, MinimumLength = 10, ErrorMessage = "يجب أن يكون السؤال بين 10 و 500 حرف")]
+    [StringLength(500, MinimumLength = 5, ErrorMessage = "يجب أن يكون السؤال بين 5 و 500 حرف")]
     public string Text { get; set; } = string.Empty;
     
     [EnumDataType(typeof(QuestionType))]
@@ -85,6 +132,15 @@ public class QuestionUpdateDto
     
     [StringLength(2048)]
     public string? MediaUrl { get; set; }
+    
+    // Passage fields
+    [StringLength(50000)]
+    public string? PassageText { get; set; }
+    
+    [Range(1, 120)]
+    public int? EstimatedTimeMinutes { get; set; }
+    
+    public List<SubQuestionCreateDto>? SubQuestions { get; set; }
     
     [ValidateJsonArray(minCount: 0, maxCount: 10)]
     public string? Options { get; set; }

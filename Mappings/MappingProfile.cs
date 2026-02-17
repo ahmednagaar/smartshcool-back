@@ -23,9 +23,16 @@ public class MappingProfile : Profile
         // Question mappings
         CreateMap<Question, QuestionGetDto>()
             .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.Type.ToString()))
-            .ForMember(dest => dest.DifficultyName, opt => opt.MapFrom(src => src.Difficulty.ToString()));
-        CreateMap<QuestionCreateDto, Question>();
-        CreateMap<QuestionUpdateDto, Question>();
+            .ForMember(dest => dest.DifficultyName, opt => opt.MapFrom(src => src.Difficulty.ToString()))
+            .ForMember(dest => dest.SubQuestions, opt => opt.MapFrom(src => src.SubQuestions));
+        CreateMap<QuestionCreateDto, Question>()
+            .ForMember(dest => dest.SubQuestions, opt => opt.Ignore());
+        CreateMap<QuestionUpdateDto, Question>()
+            .ForMember(dest => dest.SubQuestions, opt => opt.Ignore());
+
+        // SubQuestion mappings
+        CreateMap<SubQuestion, SubQuestionGetDto>();
+        CreateMap<SubQuestionCreateDto, SubQuestion>();
 
         // Game mappings
         CreateMap<Game, GameGetDto>()

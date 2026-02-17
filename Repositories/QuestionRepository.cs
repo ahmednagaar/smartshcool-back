@@ -30,13 +30,14 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
     public async Task<IEnumerable<Question>> GetFilteredAsync(GradeLevel grade, SubjectType subject, TestType testType)
     {
         return await _dbSet
+            .Include(q => q.SubQuestions.OrderBy(sq => sq.OrderIndex))
             .Where(q => q.Grade == grade && q.Subject == subject && q.TestType == testType && !q.IsDeleted)
             .ToListAsync();
     }
 
     public async Task<(IEnumerable<Question> Items, int TotalCount)> SearchAsync(QuestionSearchRequestDto searchDto)
     {
-        var query = _dbSet.AsQueryable();
+        var query = _dbSet.Include(q => q.SubQuestions.OrderBy(sq => sq.OrderIndex)).AsQueryable();
 
         // Apply filters
         if (!string.IsNullOrEmpty(searchDto.SearchTerm))
@@ -117,6 +118,13 @@ public class QuestionRepository : GenericRepository<Question>, IQuestionReposito
     public async Task<Question?> GetIncludeDeletedAsync(long id)
     {
         return await _dbSet.FirstOrDefaultAsync(q => q.Id == id);
+    }
+
+    public async Task<Question?> GetByIdWithSubQuestionsAsync(long id)
+    {
+        return await _dbSet
+            .Include(q => q.SubQuestions.OrderBy(sq => sq.OrderIndex))
+            .FirstOrDefaultAsync(q => q.Id == id && !q.IsDeleted);
     }
 }
 

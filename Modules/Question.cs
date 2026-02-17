@@ -6,7 +6,8 @@ public enum QuestionType
     TrueFalse = 2,
     ConnectLines = 3,
     FillInTheBlank = 4,
-    DragDrop = 5
+    DragDrop = 5,
+    Passage = 6
 }
 
 public enum DifficultyLevel
@@ -49,11 +50,16 @@ public class Question : BaseModel
     public SubjectType Subject { get; set; } = SubjectType.Math;
     public TestType TestType { get; set; } = TestType.Central;
     
+    // Passage question fields
+    public string? PassageText { get; set; }
+    public int? EstimatedTimeMinutes { get; set; }
+    
     // For multiple choice - stored as JSON
     public string? Options { get; set; }
     public string? CorrectAnswer { get; set; }
     
     // Navigation properties
     public ICollection<GameQuestion> GameQuestions { get; set; } = new List<GameQuestion>();
+    public ICollection<SubQuestion> SubQuestions { get; set; } = new List<SubQuestion>();
 }
 
