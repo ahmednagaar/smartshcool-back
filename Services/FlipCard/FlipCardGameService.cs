@@ -29,7 +29,7 @@ namespace Nafes.API.Services.FlipCard
             // Determine if this is an anonymous (guest) player
             bool isAnonymous = dto.StudentId <= 0;
 
-            // Check for active session (skip for anonymous users to avoid stale session issues)
+            // Check for active session (only for logged-in students)
             if (!isAnonymous)
             {
                 var activeSession = await _sessionRepository.GetActiveSessionAsync(dto.StudentId);
@@ -53,10 +53,28 @@ namespace Nafes.API.Services.FlipCard
             if (question == null)
                 throw new Exception("No flip card games available for this selection");
 
-            // Create session — use null StudentId for anonymous users
+            // For anonymous users: return virtual session without DB persistence
+            if (isAnonymous)
+            {
+                return new FlipCardGameSession
+                {
+                    Id = -1, // Virtual session ID
+                    StudentId = 0,
+                    FlipCardQuestionId = question.Id,
+                    FlipCardQuestion = question,
+                    Grade = (GradeLevel)dto.GradeId,
+                    Subject = (SubjectType)dto.SubjectId,
+                    GameMode = dto.GameMode ?? question.GameMode,
+                    TotalPairs = question.NumberOfPairs,
+                    StartTime = DateTime.UtcNow,
+                    IsCompleted = false
+                };
+            }
+
+            // For logged-in students: persist session to DB
             var session = new FlipCardGameSession
             {
-                StudentId = isAnonymous ? null : dto.StudentId,
+                StudentId = dto.StudentId,
                 FlipCardQuestionId = question.Id,
                 Grade = (GradeLevel)dto.GradeId,
                 Subject = (SubjectType)dto.SubjectId,
