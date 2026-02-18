@@ -78,9 +78,16 @@ namespace Nafes.API.Repositories.FlipCard
             return true;
         }
 
-        public async Task<IEnumerable<FlipCardQuestion>> GetAllPaginatedAsync(int page, int pageSize)
+        public async Task<IEnumerable<FlipCardQuestion>> GetAllPaginatedAsync(int page, int pageSize, string? searchTerm = null)
         {
-            return await _context.FlipCardQuestions
+            var query = _context.FlipCardQuestions.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(q => q.GameTitle.Contains(searchTerm));
+            }
+
+            return await query
                 .OrderByDescending(q => q.CreatedDate)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

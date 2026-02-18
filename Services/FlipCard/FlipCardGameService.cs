@@ -26,13 +26,17 @@ namespace Nafes.API.Services.FlipCard
 
         public async Task<FlipCardGameSession> StartSessionAsync(StartFlipCardGameDto dto)
         {
-            // Check for active session
-            var activeSession = await _sessionRepository.GetActiveSessionAsync(dto.StudentId);
-            if (activeSession != null)
+            // Determine if this is an anonymous (guest) player
+            bool isAnonymous = dto.StudentId <= 0;
+
+            // Check for active session (skip for anonymous users to avoid stale session issues)
+            if (!isAnonymous)
             {
-                // Ensure pairs are loaded
-                // activeSession.FlipCardQuestion pairs should be loaded by GetActiveSessionAsync logic
-                return activeSession; 
+                var activeSession = await _sessionRepository.GetActiveSessionAsync(dto.StudentId);
+                if (activeSession != null)
+                {
+                    return activeSession; 
+                }
             }
 
             // Get question
@@ -47,12 +51,12 @@ namespace Nafes.API.Services.FlipCard
             }
 
             if (question == null)
-                throw new Exception("No flip card games available for this selection"); // Use NotFoundException if available
+                throw new Exception("No flip card games available for this selection");
 
-            // Create session
+            // Create session — use null StudentId for anonymous users
             var session = new FlipCardGameSession
             {
-                StudentId = dto.StudentId,
+                StudentId = isAnonymous ? null : dto.StudentId,
                 FlipCardQuestionId = question.Id,
                 Grade = (GradeLevel)dto.GradeId,
                 Subject = (SubjectType)dto.SubjectId,
@@ -64,9 +68,7 @@ namespace Nafes.API.Services.FlipCard
 
             session = await _sessionRepository.CreateSessionAsync(session);
 
-            // Attach question (with pairs) to return structure so frontend has data
-            // But we must shuffle pairs before returning?
-            // Service returns Session with Question attached. Controller usually handles shuffling/hiding IDs.
+            // Attach question with pairs for the controller to use
             session.FlipCardQuestion = question;
             
             return session;
@@ -203,7 +205,8 @@ namespace Nafes.API.Services.FlipCard
             
             // Re-fetch (or reuse) for Rank
             var leaderboard = await _sessionRepository.GetLeaderboardAsync((int)session.Grade, (int)session.Subject, 100);
-            var rank = leaderboard.ToList().FindIndex(e => e.StudentName == session.Student.Name) + 1; // Basic rank logic
+            var studentName = session.Student?.Name ?? "زائر";
+            var rank = leaderboard.ToList().FindIndex(e => e.StudentName == studentName) + 1;
 
             return new SessionCompleteDto
             {

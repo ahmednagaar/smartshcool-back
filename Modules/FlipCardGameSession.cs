@@ -10,10 +10,10 @@ namespace Nafes.API.Modules
         [Key]
         public int Id { get; set; }
         
-        public long StudentId { get; set; }
+        public long? StudentId { get; set; }
         
         [ForeignKey("StudentId")]
-        public Student Student { get; set; } = null!;
+        public Student? Student { get; set; }
         
         public int FlipCardQuestionId { get; set; }
         
