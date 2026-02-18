@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nafes.API.DTOs.FlipCard;
+using Nafes.API.DTOs.TestResult;
 using Nafes.API.Modules;
 using Nafes.API.Repositories.FlipCard;
 
@@ -285,6 +286,18 @@ namespace Nafes.API.Services.FlipCard
             if (session.HintsUsed == 0) achievements.Add("No Hints Master");
             if (session.TimeSpentSeconds < 60) achievements.Add("Speed Demon");
             return achievements;
+        }
+
+        public async Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int gradeId, int subjectId)
+        {
+            var entries = await _sessionRepository.GetLeaderboardAsync(gradeId, subjectId, 10);
+            var result = entries.ToList();
+            // Assign ranks
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].Rank = i + 1;
+            }
+            return result;
         }
     }
 }

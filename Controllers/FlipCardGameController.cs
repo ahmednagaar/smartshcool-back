@@ -151,6 +151,20 @@ namespace Nafes.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("leaderboard")]
+        public async Task<IActionResult> GetLeaderboard([FromQuery] int gradeId = 0, [FromQuery] int subjectId = 0)
+        {
+            try
+            {
+                var result = await _service.GetLeaderboardAsync(gradeId, subjectId);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return Ok(new List<object>());
+            }
+        }
     }
 
     public class CompleteSessionRequest
