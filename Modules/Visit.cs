@@ -17,4 +17,7 @@ public class Visit : BaseModel
     public string? DeviceType { get; set; } // Mobile, Desktop, Tablet
     
     public string? Source { get; set; } // e.g., Direct, Referral
+    
+    [MaxLength(50)]
+    public string? StudentName { get; set; } // Name entered on welcome screen (null = anonymous)
 }

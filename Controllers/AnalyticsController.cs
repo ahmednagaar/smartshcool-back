@@ -25,6 +25,7 @@ public class AnalyticsController : ControllerBase
             UserAgent = visitDto.UserAgent,
             DeviceType = visitDto.DeviceType,
             Source = visitDto.Source,
+            StudentName = visitDto.StudentName,
             CreatedDate = DateTime.UtcNow
         };
 
@@ -54,6 +55,20 @@ public class AnalyticsController : ControllerBase
         var totalVisits = await _analyticsService.GetTotalVisitsAsync();
         return Ok(new { totalVisits });
     }
+
+    [HttpGet("visitors")]
+    public async Task<IActionResult> GetRecentVisitors([FromQuery] int count = 20)
+    {
+        var visitors = await _analyticsService.GetRecentVisitorsAsync(count);
+        return Ok(visitors);
+    }
+
+    [HttpGet("visitors/stats")]
+    public async Task<IActionResult> GetVisitorStats()
+    {
+        var stats = await _analyticsService.GetVisitorStatsAsync();
+        return Ok(stats);
+    }
 }
 
 public class VisitDTO
@@ -63,6 +78,7 @@ public class VisitDTO
     public string? UserAgent { get; set; }
     public string? DeviceType { get; set; }
     public string? Source { get; set; }
+    public string? StudentName { get; set; }
 }
 
 public class AnalyticsEventDTO
